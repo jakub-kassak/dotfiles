@@ -3,4 +3,5 @@
 -- Add any additional options here
 -- In case you don't want to use `:LazyExtras`,
 -- then you need to set the option below.
-vim.opt.background = "light" -- set this to dark or light
+-- vim.opt.background = "light" -- set this to dark or light
+-- vim.g.python3_host_prog = "/opt/homebrew/anaconda3/envs/nvim/bin/python"
