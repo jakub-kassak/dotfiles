@@ -45,13 +45,22 @@ return {
     },
   },
   {
+    "neovim/nvim-lspconfig",
+    opts = {
+      document_highlight = {
+        enabled = false,
+      },
+    },
+  },
+  {
     "askfiy/visual_studio_code",
-    priority = 100,
+    -- priority = 100,
+    lazy = true,
     config = function()
-      vim.cmd([[colorscheme visual_studio_code]])
+      -- vim.cmd([[colorscheme visual_studio_code]])
       require("visual_studio_code").setup({
         -- `dark` or `light`
-        mode = "light",
+        mode = "dark",
         -- Whether to load all color schemes
         preset = true,
         -- Whether to enable background transparency
@@ -72,7 +81,7 @@ return {
           bufferline = true,
           nvim_navic = true,
           nvim_notify = true,
-          vim_illuminate = true,
+          vim_illuminate = false,
           nvim_treesitter = true,
           nvim_ts_rainbow = true,
           nvim_scrollview = true,

@@ -1,0 +1,13 @@
+k9s:
+  cluster: production-cluster
+  skin: red
+  namespace:
+    active: default
+    lockFavorites: false
+    favorites:
+    - default
+  view:
+    active: po
+  featureGates:
+    nodeShell: false
+  portForwardAddress: localhost

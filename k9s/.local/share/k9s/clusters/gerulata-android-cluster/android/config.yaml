@@ -1,0 +1,12 @@
+k9s:
+  cluster: gerulata-android-cluster
+  namespace:
+    active: fb-mobile
+    lockFavorites: false
+    favorites:
+    - fb-mobile
+  view:
+    active: namespace
+  featureGates:
+    nodeShell: false
+  portForwardAddress: localhost
