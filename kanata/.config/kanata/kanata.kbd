@@ -1,0 +1,44 @@
+(defcfg
+      process-unmapped-keys no
+      log-layer-changes no
+)
+
+(defsrc
+      esc bspc
+      caps h j k l
+      lshift rshift
+      lctrl lmet lalt spc ralt rctrl
+)
+
+(deflayer default
+      @esc @bs-del
+      @cap _ _ _ _
+      lshift lshift
+      lmet ralt lctrl spc rctrl ralt
+)
+
+(deflayer cap-mod
+      _ _
+      _ left down up rght
+      _ _
+      _ _ _ bspc _ _
+)
+
+(defvar
+      tap-time 200
+      hold-time 250
+)
+
+(defalias
+      caps-word-tab (caps-word-custom
+        2000  ;; Timeout duration in milliseconds
+        (a b c d e f g h i j k l m n o p q r s t u v w x y z -)  ;; Keys that trigger shift (capitalized)
+        (tab bspc del left rght)  ;; Extra non-terminating keys
+      )
+      esc (tap-hold-press $tap-time $hold-time @caps-word-tab caps)
+      cap (tap-hold-press $tap-time $hold-time esc (layer-toggle cap-mod))
+      shift-bcsp (unmod del)
+      bs-del (fork bspc @shift-bcsp (lshift rshift))
+      ctrl-tab (multi tab rctrl)
+      ;; alt (fork ralt @ctrl-tab (tab))
+)
