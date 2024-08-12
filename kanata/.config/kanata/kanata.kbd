@@ -4,7 +4,8 @@
 )
 
 (defsrc
-      esc bspc
+      esc 
+      5 bspc
       tab q w e r t y u i o p
       caps a s d f g h j k l
       lshift rshift z x c v b n m
@@ -12,7 +13,8 @@
 )
 
 (deflayer default
-      @esc @bs-del
+      @esc 
+      _ @bs-del
       _ _ _ _ _ _ _ _ _ _ _
       @cap _ _ _ _ _ _ _ _ _
       lshift lshift _ _ _ _ _ _ _
@@ -20,6 +22,7 @@
 )
 
 (deflayer cap-mod
+      _
       _ _
       _ _ _ _ _ _ _ _ _ _ _
       caps _ _ _ _ _ left down up rght
@@ -29,7 +32,8 @@
 
 
 (deflayer alt-mod
-      _ _
+      _
+      @€ _
       _ @ä @ě @é @ŕ @ť @ý @ú @í @ó @ô
       _ @á @š @ď @ř @ö @ü @ů @ĺ @ľ
       _ _ @ž @ß @č _ _ @ň _ 
@@ -60,6 +64,7 @@
       alt (tap-hold-press $tap-time $hold-time lalt (multi lalt (layer-toggle alt-mod)))
 
       ß (fork (unmod ralt x) (unmod ralt lshift x) (lshift rshift))
+      € (fork (unmod ralt 5) (unmod ralt lshift 5) (lshift rshift))
       á (fork (unmod ralt a) (unmod ralt lshift a) (lshift rshift))
       ä (fork (unmod ralt q) (unmod ralt lshift q) (lshift rshift))
       é (fork (unmod ralt e) (unmod ralt lshift e) (lshift rshift))
