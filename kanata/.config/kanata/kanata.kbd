@@ -4,6 +4,7 @@
 )
 
 (defsrc
+      mlft mmid mrgt
       esc 
       5 bspc
       tab q w e r t y u i o p
@@ -13,6 +14,7 @@
 )
 
 (deflayer default
+      mlft @mouse_mid mrgt
       @esc 
       _ @bs-del
       _ _ _ _ _ _ _ _ _ _ _
@@ -22,6 +24,7 @@
 )
 
 (deflayer cap-mod
+      _ _ _
       _
       _ _
       _ _ _ _ _ _ _ _ _ _ _
@@ -32,11 +35,22 @@
 
 
 (deflayer alt-mod
+      _ _ _
       _
       @€ _
       _ @ä @ě @é @ŕ @ť @ý @ú @í @ó @ô
       _ @á @š @ď @ř @ö @ü @ů @ĺ @ľ
       _ _ @ž @ß @č _ _ @ň _ 
+      _ _ _ _ _ _
+)
+
+(deflayer mouse-mod
+      (multi lmet home) _ (multi lmet end)
+      _
+      _ _
+      _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ _ _
       _ _ _ _ _ _
 )
 
@@ -51,10 +65,11 @@
 
 
 (defalias
+      mouse_mid (tap-hold-press $tap-time $hold-time (multi lctrl spc) (layer-toggle mouse-mod))
       caps-word-tab (caps-word-custom
         2000  ;; Timeout duration in milliseconds
         (a b c d e f g h i j k l m n o p q r s t u v w x y z -)  ;; Keys that trigger shift (capitalized)
-        (tab bspc del left rght)  ;; Extra non-terminating keys
+        (tab bspc del left rght 0 1 2 3 4 5 6 7 8 9 lshift)  ;; Extra non-terminating keys
       )
       esc (tap-hold-press $tap-time $hold-time @caps-word-tab caps)
       cap (tap-hold-press $tap-time $hold-time esc (layer-toggle cap-mod))
