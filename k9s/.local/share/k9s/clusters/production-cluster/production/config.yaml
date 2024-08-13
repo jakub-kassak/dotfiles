@@ -2,12 +2,15 @@ k9s:
   cluster: production-cluster
   skin: red
   namespace:
-    active: default
+    active: tiktok-new
     lockFavorites: false
     favorites:
-    - default
+    - daq
+    - imageboard-dev
+    - imageboard
+    - tiktok-new
   view:
-    active: po
+    active: deploy tiktok-new
   featureGates:
     nodeShell: false
   portForwardAddress: localhost

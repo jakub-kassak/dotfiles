@@ -4,9 +4,12 @@ k9s:
     active: fb-mobile
     lockFavorites: false
     favorites:
+    - kube-system
+    - container-registry
+    - all
     - fb-mobile
   view:
-    active: namespace
+    active: deploy
   featureGates:
     nodeShell: false
   portForwardAddress: localhost

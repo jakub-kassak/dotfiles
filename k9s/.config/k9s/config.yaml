@@ -31,7 +31,7 @@ k9s:
     buffer: 5000
     sinceSeconds: -1
     textWrap: false
-    showTime: true
+    showTime: false
   thresholds:
     cpu:
       critical: 90
