@@ -20,27 +20,16 @@
       _ _ _ _ _ _ _ _ _ _ _
       @cap _ _ _ _ _ _ _ _ _
       lshift lshift _ _ _ _ _ _ _
-      lmet @alt lctrl spc rctrl @alt
+      lctrl ralt lmet spc lalt ralt
 )
 
 (deflayer cap-mod
       _ _ _
       _
       _ _
-      _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ _ _ home pgdn pgup end
       caps _ _ _ _ _ left down up rght
       _ _ _ _ _ _ _ _ _
-      _ _ _ _ _ _
-)
-
-
-(deflayer alt-mod
-      _ _ _
-      _
-      @€ _
-      _ @ä @ě @é @ŕ @ť @ý @ú @í @ó @ô
-      _ @á @š @ď @ř @ö @ü @ů @ĺ @ľ
-      _ _ @ž @ß @č _ _ @ň _ 
       _ _ _ _ _ _
 )
 
@@ -59,13 +48,8 @@
       hold-time 250
 )
 
-(defvirtualkeys
-      alt_a (unicode á)
-)
-
-
 (defalias
-      mouse_mid (tap-hold-press $tap-time $hold-time (multi lctrl spc) (layer-toggle mouse-mod))
+      mouse_mid (tap-hold-press $tap-time $hold-time (multi lmet spc) (layer-toggle mouse-mod))
       caps-word-tab (caps-word-custom
         2000  ;; Timeout duration in milliseconds
         (a b c d e f g h i j k l m n o p q r s t u v w x y z -)  ;; Keys that trigger shift (capitalized)
@@ -76,30 +60,4 @@
       shift-bcsp (unmod del)
       bs-del (fork bspc @shift-bcsp (lshift rshift))
       ctrl-tab (multi tab rctrl)
-      alt (tap-hold-press $tap-time $hold-time lalt (multi lalt (layer-toggle alt-mod)))
-
-      ß (fork (unmod ralt x) (unmod ralt lshift x) (lshift rshift))
-      € (fork (unmod ralt 5) (unmod ralt lshift 5) (lshift rshift))
-      á (fork (unmod ralt a) (unmod ralt lshift a) (lshift rshift))
-      ä (fork (unmod ralt q) (unmod ralt lshift q) (lshift rshift))
-      é (fork (unmod ralt e) (unmod ralt lshift e) (lshift rshift))
-      í (fork (unmod ralt i) (unmod ralt lshift i) (lshift rshift))
-      ó (fork (unmod ralt o) (unmod ralt lshift o) (lshift rshift))
-      ô (fork (unmod ralt p) (unmod ralt lshift p) (lshift rshift))
-      ö (fork (unmod ralt g) (unmod ralt lshift g) (lshift rshift))
-      ú (fork (unmod ralt u) (unmod ralt lshift u) (lshift rshift))
-      ü (fork (unmod ralt h) (unmod ralt lshift h) (lshift rshift))
-      ý (fork (unmod ralt y) (unmod ralt lshift y) (lshift rshift))
-      č (fork (unmod ralt c) (unmod ralt lshift c) (lshift rshift))
-      ď (fork (unmod ralt d) (unmod ralt lshift d) (lshift rshift))
-      ě (fork (unmod ralt w) (unmod ralt lshift w) (lshift rshift))
-      ĺ (fork (unmod ralt k) (unmod ralt lshift k) (lshift rshift))
-      ľ (fork (unmod ralt l) (unmod ralt lshift l) (lshift rshift))
-      ň (fork (unmod ralt n) (unmod ralt lshift n) (lshift rshift))
-      ŕ (fork (unmod ralt r) (unmod ralt lshift r) (lshift rshift))
-      ř (fork (unmod ralt f) (unmod ralt lshift f) (lshift rshift))
-      š (fork (unmod ralt s) (unmod ralt lshift s) (lshift rshift))
-      ť (fork (unmod ralt t) (unmod ralt lshift t) (lshift rshift))
-      ů (fork (unmod ralt j) (unmod ralt lshift j) (lshift rshift))
-      ž (fork (unmod ralt z) (unmod ralt lshift z) (lshift rshift))
 )
