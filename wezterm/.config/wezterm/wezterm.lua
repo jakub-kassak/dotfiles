@@ -34,82 +34,91 @@ config.window_decorations = "RESIZE|TITLE"
 
 config.font_size = 15
 
+local act = wezterm.action
 config.keys = {
 	-- Copy to clipboard using Ctrl+C
-	{ key = "c", mods = "CTRL", action = wezterm.action({ CopyTo = "Clipboard" }) },
-
-	-- Send interrupt signal (SIGINT) using Ctrl+Shift+C
-	{ key = "c", mods = "CTRL|SHIFT", action = wezterm.action({ SendKey = { key = "c", mods = "CTRL" } }) },
-
+	{
+		key = "c",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(win, pane)
+			local has_selection = win:get_selection_text_for_pane(pane) ~= ""
+			if has_selection then
+				-- Copy the selection to the clipboard
+				win:perform_action(wezterm.action.CopyTo("Clipboard"), pane)
+				-- Clear the selection
+				win:perform_action(wezterm.action.ClearSelection, pane)
+			else
+				-- Send Ctrl+C if no selection is present
+				win:perform_action(wezterm.action.SendKey({ key = "c", mods = "CTRL" }), pane)
+			end
+		end),
+	},
+	-- { key = "c", mods = "CTRL", action = act({ CopyTo = "Clipboard" }) },
 	-- Paste from clipboard using Ctrl+V
-	{ key = "v", mods = "CTRL", action = wezterm.action({ PasteFrom = "Clipboard" }) },
+	{ key = "v", mods = "CTRL", action = act({ PasteFrom = "Clipboard" }) },
+	-- Close the current tab
+	{ key = "w", mods = "CTRL", action = act({ CloseCurrentTab = { confirm = true } }) },
 
-	-- Send Ctrl+V key combination using Ctrl+Shift+V
-	{ key = "v", mods = "CTRL|SHIFT", action = wezterm.action({ SendKey = { key = "v", mods = "CTRL" } }) },
+	{ key = "a", mods = "SUPER", action = act({ SendKey = { key = "a", mods = "CTRL" } }) },
+	{ key = "c", mods = "SUPER", action = act({ SendKey = { key = "c", mods = "CTRL" } }) },
+	{ key = "d", mods = "SUPER", action = act({ SendKey = { key = "d", mods = "CTRL" } }) },
+	{ key = "e", mods = "SUPER", action = act({ SendKey = { key = "e", mods = "CTRL" } }) },
+	{ key = "h", mods = "SUPER", action = act({ SendKey = { key = "h", mods = "CTRL" } }) },
+	{ key = "j", mods = "SUPER", action = act({ SendKey = { key = "j", mods = "CTRL" } }) },
+	{ key = "k", mods = "SUPER", action = act({ SendKey = { key = "k", mods = "CTRL" } }) },
+	{ key = "l", mods = "SUPER", action = act({ SendKey = { key = "l", mods = "CTRL" } }) },
+	{ key = "l", mods = "SUPER", action = act({ SendKey = { key = "l", mods = "CTRL" } }) },
+	{ key = "o", mods = "SUPER", action = act({ SendKey = { key = "o", mods = "CTRL" } }) },
+	{ key = "p", mods = "SUPER", action = act({ SendKey = { key = "p", mods = "CTRL" } }) },
+	{ key = "r", mods = "SUPER", action = act({ SendKey = { key = "r", mods = "CTRL" } }) },
+	{ key = "v", mods = "SUPER", action = act({ SendKey = { key = "v", mods = "CTRL" } }) },
+	{ key = "y", mods = "SUPER", action = act({ SendKey = { key = "y", mods = "CTRL" } }) },
+	{ key = "z", mods = "SUPER", action = act({ SendKey = { key = "z", mods = "CTRL" } }) },
+	{ key = "f", mods = "SUPER", action = act({ SendKey = { key = "f", mods = "CTRL" } }) },
+	{ key = "/", mods = "SUPER", action = act({ SendKey = { key = "/", mods = "CTRL" } }) },
+	{ key = "]", mods = "SUPER", action = act({ SendKey = { key = "]", mods = "CTRL" } }) },
+	-- Send Ctrl + [ with SUPER + [
+	{ key = "[", mods = "SUPER", action = act({ SendKey = { key = "[", mods = "CTRL" } }) },
+	-- Send Ctrl + tab with SUPER + tab
+	{ key = "Tab", mods = "SUPER", action = act({ SendKey = { key = "Tab", mods = "CTRL" } }) },
+	{ key = " ", mods = "SUPER", action = act({ SendKey = { key = " ", mods = "CTRL" } }) },
+	-- Send ctrl + t with SUPER + t
+	{ key = "t", mods = "SUPER", action = act({ SendKey = { key = "t", mods = "CTRL" } }) },
+	-- Send Alt + c with SUPER + SHIFT + c
+	{ key = "c", mods = "SUPER|SHIFT", action = act({ SendKey = { key = "c", mods = "ALT" } }) },
 
-	-- Send Ctrl+V key combination using SUPER+V
-	{ key = "v", mods = "SUPER", action = wezterm.action({ SendKey = { key = "v", mods = "CTRL" } }) },
-
-	-- Send interrupt signal (SIGINT) using Super+C
-	{ key = "c", mods = "SUPER", action = wezterm.action({ SendKey = { key = "c", mods = "CTRL" } }) },
+	-- Search with Crtl+F
+	{ key = "f", mods = "CTRL", action = act.Search("CurrentSelectionOrEmptyString") },
 
 	-- Show tab navigator
-	{
-		key = "p",
-		mods = "CTRL",
-		action = wezterm.action.ShowTabNavigator,
-	},
+	{ key = "p", mods = "CTRL", action = act.ShowTabNavigator },
 	-- Show launcher menu
-	{
-		key = "P",
-		mods = "CTRL|SHIFT",
-		action = wezterm.action.ShowLauncher,
-	},
+	{ key = "P", mods = "CTRL|SHIFT", action = act.ShowLauncher },
+	-- Spawn a new tab
+	{ key = "t", mods = "CTRL", action = act({ SpawnTab = "CurrentPaneDomain" }) },
+
 	-- Vertical pipe (|) -> horizontal split
-	{
-		key = "|",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.SplitHorizontal({
-			domain = "CurrentPaneDomain",
-		}),
-	},
+	{ key = "|", mods = "CTRL|SHIFT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 	-- Underscore (_) -> vertical split
-	{
-		key = "_",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.SplitVertical({
-			domain = "CurrentPaneDomain",
-		}),
-	},
+	{ key = "_", mods = "CTRL|SHIFT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	-- Use CTRL + [h|j|k|l] to move between panes
-	{
-		key = "h",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.ActivatePaneDirection("Left"),
-	},
+	{ key = "h", mods = "CTRL", action = act.ActivatePaneDirection("Left") },
+	{ key = "j", mods = "CTRL", action = act.ActivatePaneDirection("Down") },
+	{ key = "k", mods = "CTRL", action = act.ActivatePaneDirection("Up") },
+	{ key = "l", mods = "CTRL", action = act.ActivatePaneDirection("Right") },
 
-	{
-		key = "j",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.ActivatePaneDirection("Down"),
-	},
+	-- Move to another tab (next or previous) using CTRL+[ or CTRL+]
+	{ key = "LeftArrow", mods = "CTRL|ALT", action = wezterm.action.ActivateTabRelative(-1) },
+	{ key = "RightArrow", mods = "CTRL|ALT", action = wezterm.action.ActivateTabRelative(1) },
 
-	{
-		key = "k",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.ActivatePaneDirection("Up"),
-	},
+	-- Activate the last tab
+	{ key = "Tab", mods = "CTRL", action = act.ActivateLastTab },
 
+	-- Rename current tab with CTRL+e
 	{
-		key = "l",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.ActivatePaneDirection("Right"),
-	},
-	-- Rename current tab
-	{
-		key = "E",
-		mods = "SUPER|SHIFT",
-		action = wezterm.action.PromptInputLine({
+		key = "e",
+		mods = "CTRL",
+		action = act.PromptInputLine({
 			description = "Enter new name for tab",
 			action = wezterm.action_callback(function(window, _, line)
 				if line then
@@ -120,13 +129,14 @@ config.keys = {
 	},
 
 	-- Move to a pane (prompt to which one)
-	{
-		mods = "SUPER|SHIFT",
-		key = "m",
-		action = wezterm.action.PaneSelect,
-	},
+	{ mods = "CTRL", key = "m", action = act.PaneSelect },
 }
 
 config.pane_focus_follows_mouse = false
+config.quick_select_patterns = {
+	"(?<=[$] ).{1,100}",
+	'(?<=")[a-z][^"]+',
+}
 
+config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
 return config
