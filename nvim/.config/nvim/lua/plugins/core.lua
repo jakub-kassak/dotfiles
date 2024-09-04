@@ -1,6 +1,7 @@
 local function find_command()
   if 1 == vim.fn.executable("rg") then
-    return { "rg", "--files", "--color", "never", "-g", "!.git", "-.", "--no-ignore" }
+    -- return { "rg", "--files", "--color", "never", "-g", "!.ruff_cache", "-g", "!__pycache__", "-g", "!.git", "-.", "--no-ignore" }
+    return { "rg", "--files", "-.", "-g", "!.git" }
   elseif 1 == vim.fn.executable("fd") then
     return { "fd", "--type", "f", "--color", "never", "-E", ".git" }
   elseif 1 == vim.fn.executable("fdfind") then
@@ -32,5 +33,23 @@ return {
       silent = false,
       exclude_ft = { "neo-tree" },
     },
+  },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    build = ":Copilot auth",
+    opts = {
+      suggestion = { enabled = true },
+      panel = { enabled = false },
+      filetypes = {
+        markdown = true,
+        help = true,
+        yaml = true,
+      },
+    },
+  },
+  {
+    "willothy/wezterm.nvim",
+    config = true,
   },
 }

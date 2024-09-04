@@ -8,7 +8,10 @@ vim.opt.background = "dark" -- set this to dark or light
 -- Disable highlighting of the current line
 -- vim.o.cursorline = false
 
+vim.g.lazygit_floating_window_scaling_factor = 0.999
 vim.g.lazygit_config = false
 
 vim.cmd("highlight MyCursor guifg=#ffffff guibg=#ff0000")
 vim.o.guicursor = "n-v:block-MyCursor,i:ver25,c:block,ci:ver25"
+
+vim.g.root_spec = { { ".git", "lua" }, "cwd" }
