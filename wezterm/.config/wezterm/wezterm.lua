@@ -6,12 +6,6 @@ local config = wezterm.config_builder()
 -- For example, changing the color scheme:
 
 local function depending_on_appearance(arg)
-	-- local appearance = wezterm.gui.get_appearance()
-	-- if appearance:find("Dark") then
-	-- 	return arg.dark
-	-- else
-	-- 	return arg.light
-	-- end
 	local hour = tonumber(os.date("%H"))
 
 	if hour >= 5 and hour < 20 then
@@ -54,7 +48,7 @@ config.colors = {
 }
 config.window_decorations = "RESIZE|TITLE"
 
-config.font_size = 15
+config.font_size = 13
 
 local act = wezterm.action
 config.keys = {
@@ -83,23 +77,15 @@ config.keys = {
 			end
 		end),
 	},
-	{ key = "V", mods = "CTRL|SHIFT", action = act.SendKey({ key = "v", mods = "CTRL" }) },
-	{ key = "v", mods = "CTRL", action = act({ PasteFrom = "Clipboard" }) },
-
-	-- { key = "c", mods = "CTRL", action = act.CopyTo("Clipboard") },
-	-- { key = "c", mods = "SUPER", action = act.SendKey({ key = "c", mods = "CTRL" }) },
 	-- -- Close the current tab
-	{ key = "w", mods = "CTRL", action = act({ CloseCurrentTab = { confirm = true } }) },
-
-	-- Search with Crtl+F
-	-- { key = "f", mods = "CTRL", action = act.Search("CurrentSelectionOrEmptyString") },
+	{ key = "w", mods = "CMD", action = act({ CloseCurrentTab = { confirm = true } }) },
 
 	-- Show tab navigator
 	{ key = "p", mods = "SUPER", action = act.ShowTabNavigator },
 	-- Show launcher menu
 	{ key = "P", mods = "SUPER|SHIFT", action = act.ShowLauncher },
 	-- Spawn a new tab
-	{ key = "t", mods = "CTRL", action = act({ SpawnTab = "CurrentPaneDomain" }) },
+	{ key = "t", mods = "CMD", action = act({ SpawnTab = "CurrentPaneDomain" }) },
 
 	-- Vertical pipe (|) -> horizontal split
 	{ key = "|", mods = "CTRL|SHIFT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
@@ -117,7 +103,7 @@ config.keys = {
 	{ key = "]", mods = "CTRL", action = wezterm.action.ActivateTabRelative(1) },
 
 	-- Activate the last tab
-	{ key = "Tab", mods = "CTRL", action = act.ActivateLastTab },
+	-- { key = "Tab", mods = "CTRL", action = act.ActivateLastTab },
 	-- { key = "Tab", mods = "CTRL", action = act.SendKey{key = "Tab", mods = "CTRL"} },
 
 	-- Rename current tab with CTRL + SHIFT + e
