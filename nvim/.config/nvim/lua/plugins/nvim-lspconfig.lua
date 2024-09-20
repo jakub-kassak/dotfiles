@@ -1,35 +1,5 @@
 return {
   {
-    "p00f/clangd_extensions.nvim",
-    lazy = true,
-    config = function() end,
-    opts = {
-      inlay_hints = {
-        inline = true,
-      },
-      ast = {
-        --These require codicons (https://github.com/microsoft/vscode-codicons)
-        role_icons = {
-          type = "",
-          declaration = "",
-          expression = "",
-          specifier = "",
-          statement = "",
-          ["template argument"] = "",
-        },
-        kind_icons = {
-          Compound = "",
-          Recovery = "",
-          TranslationUnit = "",
-          PackExpansion = "",
-          TemplateTypeParm = "",
-          TemplateTemplateParm = "",
-          TemplateParamObject = "",
-        },
-      },
-    },
-  },
-  {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
@@ -69,6 +39,7 @@ return {
             clangdFileStatus = true,
           },
         },
+        neocmake = {},
       },
       setup = {
         clangd = function(_, opts)
@@ -78,17 +49,5 @@ return {
         end,
       },
     },
-  },
-  {
-    "nvim-cmp",
-    opts = function(_, opts)
-      table.insert(opts.sorting.comparators, 1, require("clangd_extensions.cmp_scores"))
-    end,
-  },
-  {
-    -- Ensure C/C++ debugger is installed
-    "williamboman/mason.nvim",
-    optional = true,
-    opts = { ensure_installed = { "codelldb" } },
   },
 }
