@@ -10,6 +10,12 @@ after-login-command = []
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = []
 
+# exec-on-workspace-change = [
+#     '/bin/bash',
+#     '-c',
+#     '/opt/homebrew/opt/sketchybar/bin/sketchybar --trigger aerospace_workspace_change AEROSPACE_FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE AEROSPACE_PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE',
+# ]
+
 # Start AeroSpace at login
 start-at-login = true
 
@@ -29,35 +35,39 @@ inner.horizontal = 2
 inner.vertical =   2
 outer.left =       2
 outer.bottom =     2
-outer.top =        2
+outer.top =        2 # [{monitor.built-in = 2}, 35]
 outer.right =      2
 
 [mode.main.binding]
 # See: https://nikitabobko.github.io/AeroSpace/goodness#open-a-new-window-with-applescript
-alt-enter = 'exec-and-forget wezterm cli spawn --new-window'
+# cmd-ctrl-alt-t = 'exec-and-forget wezterm cli spawn --new-window'
+cmd-ctrl-alt-b = 'exec-and-forget open -n -a "Brave Browser"'
+cmd-ctrl-alt-shift-enter = 'exec-and-forget open -n -a "Brave Browser"'
+cmd-ctrl-alt-enter = 'exec-and-forget open -n -a wezterm'
+# cmd-ctrl-alt-c = 'exec-and-forget open -a "Commander one"'
 
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
+cmd-ctrl-alt-h = 'focus left'
+cmd-ctrl-alt-j = 'focus down'
+cmd-ctrl-alt-k = 'focus up'
+cmd-ctrl-alt-l = 'focus right'
 
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
+cmd-ctrl-alt-shift-h = 'move left'
+cmd-ctrl-alt-shift-j = 'move down'
+cmd-ctrl-alt-shift-k = 'move up'
+cmd-ctrl-alt-shift-l = 'move right'
 
 # Consider using 'join-with' command as a 'split' replacement if you want to enable normalizations
 # alt-c = 'split horizontal'
 # alt-v = 'split vertical'
 
-alt-f = 'fullscreen'
-alt-shift-f = 'macos-native-fullscreen'
+cmd-ctrl-alt-f = 'fullscreen'
+cmd-ctrl-alt-shift-f = 'macos-native-fullscreen'
 
-alt-s = 'layout v_accordion' # 'layout stacking' in i3
-alt-w = 'layout h_accordion' # 'layout tabbed' in i3
-alt-e = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
+cmd-ctrl-alt-s = 'layout v_accordion' # 'layout stacking' in i3
+cmd-ctrl-alt-w = 'layout h_accordion' # 'layout tabbed' in i3
+cmd-ctrl-alt-e = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
 
-alt-shift-space = 'layout floating tiling' # 'floating toggle' in i3
+cmd-ctrl-alt-shift-space = 'layout floating tiling' # 'floating toggle' in i3
 
 # Not supported, because this command is redundant in AeroSpace mental model.
 # See: https://nikitabobko.github.io/AeroSpace/guide#floating-windows
@@ -67,38 +77,54 @@ alt-shift-space = 'layout floating tiling' # 'floating toggle' in i3
 # should be supported at all https://github.com/nikitabobko/AeroSpace/issues/5
 # alt-a = 'focus parent'
 
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
-alt-0 = 'workspace 10'
-alt-o = 'workspace o'
-alt-m = 'workspace m'
+cmd-ctrl-alt-1 = 'workspace 1'
+cmd-ctrl-alt-2 = 'workspace 2'
+cmd-ctrl-alt-3 = 'workspace 3'
+cmd-ctrl-alt-4 = 'workspace 4'
+cmd-ctrl-alt-5 = 'workspace 5'
+cmd-ctrl-alt-6 = 'workspace 6'
+cmd-ctrl-alt-7 = 'workspace 7'
+cmd-ctrl-alt-8 = 'workspace 8'
+cmd-ctrl-alt-9 = 'workspace 9'
+cmd-ctrl-alt-0 = 'workspace 10'
+cmd-ctrl-alt-o = 'workspace o'
+cmd-ctrl-alt-m = 'workspace m'
+cmd-ctrl-alt-n = 'workspace .'
 
-alt-shift-1 = 'move-node-to-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9'
-alt-shift-0 = 'move-node-to-workspace 10'
-alt-shift-o = 'move-node-to-workspace o'
-alt-shift-m = 'move-node-to-workspace m'
+cmd-ctrl-alt-shift-1 = 'move-node-to-workspace 1'
+cmd-ctrl-alt-shift-2 = 'move-node-to-workspace 2'
+cmd-ctrl-alt-shift-3 = 'move-node-to-workspace 3'
+cmd-ctrl-alt-shift-4 = 'move-node-to-workspace 4'
+cmd-ctrl-alt-shift-5 = 'move-node-to-workspace 5'
+cmd-ctrl-alt-shift-6 = 'move-node-to-workspace 6'
+cmd-ctrl-alt-shift-7 = 'move-node-to-workspace 7'
+cmd-ctrl-alt-shift-8 = 'move-node-to-workspace 8'
+cmd-ctrl-alt-shift-9 = 'move-node-to-workspace 9'
+cmd-ctrl-alt-shift-0 = 'move-node-to-workspace 10'
+cmd-ctrl-alt-shift-o = 'move-node-to-workspace o'
+cmd-ctrl-alt-shift-m = 'move-node-to-workspace m'
+cmd-ctrl-alt-shift-n = 'move-node-to-workspace .'
 
-alt-shift-c = 'reload-config'
+alt-ctrl-1 = ['move-node-to-workspace 1' , 'workspace 1']
+alt-ctrl-2 = ['move-node-to-workspace 2' , 'workspace 2']
+alt-ctrl-3 = ['move-node-to-workspace 3' , 'workspace 3']
+alt-ctrl-4 = ['move-node-to-workspace 4' , 'workspace 4']
+alt-ctrl-5 = ['move-node-to-workspace 5' , 'workspace 5']
+alt-ctrl-6 = ['move-node-to-workspace 6' , 'workspace 6']
+alt-ctrl-7 = ['move-node-to-workspace 7' , 'workspace 7']
+alt-ctrl-8 = ['move-node-to-workspace 8' , 'workspace 8']
+alt-ctrl-9 = ['move-node-to-workspace 9' , 'workspace 9']
+alt-ctrl-0 = ['move-node-to-workspace 10', 'workspace 10']
+alt-ctrl-o = ['move-node-to-workspace o' , 'workspace o']
+alt-ctrl-m = ['move-node-to-workspace m' , 'workspace m']
+alt-ctrl-n = ['move-node-to-workspace .' , 'workspace .']
+
+cmd-ctrl-alt-shift-c = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
-alt-shift-r = 'mode resize'
-alt-shift-s = 'mode service'
-alt-space = 'mode alt-passthrough'
+cmd-ctrl-alt-shift-r = 'mode resize'
+cmd-ctrl-alt-shift-s = 'mode service'
+# alt-space = 'mode alt-passthrough'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -115,19 +141,21 @@ l = ['join-with right', 'mode main']
 
 [mode.resize.binding]
 h = 'resize width -50'
-j = 'resize height +50'
-k = 'resize height -50'
+j = 'resize height -50'
+k = 'resize height +50'
 l = 'resize width +50'
 enter = 'mode main'
 esc = 'mode main'
 b = ['balance-sizes', 'mode main']
 
-[mode.alt-passthrough.binding]
-alt-space = 'mode main'
+# [mode.alt-passthrough.binding]
+# alt-space = 'mode main'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
 run = 'move-node-to-workspace o'
+
+### cli-command: aerospace list-apps
 
 # messaging apps
 [[on-window-detected]]
@@ -139,11 +167,27 @@ run = 'move-node-to-workspace m'
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
 run = 'move-node-to-workspace m'
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace m'
 
 [[on-window-detected]]
 if.app-id = 'com.bitwarden.desktop'
 run = 'move-node-to-workspace b'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.mail'
-run = 'layout tiling'
+if.app-id = 'com.eltima.cmd1'
+run = 'move-node-to-workspace 10'
+
+[[on-window-detected]]
+if.app-id = 'com.foxit-software.Foxit.PDF.Reader'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+if.app-id = 'fyi.paisa.Paisa'
+run = 'move-node-to-workspace 7'
+
