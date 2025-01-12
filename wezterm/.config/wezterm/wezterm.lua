@@ -6,12 +6,11 @@ local config = wezterm.config_builder()
 -- For example, changing the color scheme:
 
 local function depending_on_appearance(arg)
-	local hour = tonumber(os.date("%H"))
-
-	if hour >= 5 and hour < 20 then
-		return arg.light
-	else
+	local appearance = wezterm.gui.get_appearance()
+	if appearance:find("Dark") then
 		return arg.dark
+	else
+		return arg.light
 	end
 end
 
@@ -33,7 +32,7 @@ config.color_schemes = {
 config.initial_rows = 35
 config.initial_cols = 110
 config.color_scheme = depending_on_appearance({
-	light = "PaperColor Light (base16)", --"Gruvbox light, hard (base16)", -- "Tokyo Night Moon", -- "Vs Code Light+ (Gogh)", -- 3024 (light) (terminal.sexy)", --One Light (Gogh)", --Vs Code Light+ (Gogh)", -- Catppuccin Latte',
+	light = "Tokyo Night Moon", --"PaperColor Light (base16)", --"Gruvbox light, hard (base16)", -- "Tokyo Night Moon", -- "Vs Code Light+ (Gogh)", -- 3024 (light) (terminal.sexy)", --One Light (Gogh)", --Vs Code Light+ (Gogh)", -- Catppuccin Latte',
 	dark = "Gruvbox dark, hard (base16)", -- "Papercolor Dark (Gogh)", --"Tokyo Night", -- "Vs Code Dark+ (Gogh)", --3024 (dark) (terminal.sexy)", -- Catppuccin Mocha",
 })
 config.use_fancy_tab_bar = false
@@ -46,17 +45,28 @@ config.colors = {
 		}),
 	},
 }
-config.window_decorations = "RESIZE|TITLE"
+config.window_decorations = "RESIZE"
 
 config.font_size = 13
 
 local act = wezterm.action
 config.keys = {
 	{
+		key = "PageUp",
+		mods = "NONE",
+		action = wezterm.action.ScrollByLine(-3),
+	},
+	-- Scroll down by 3 lines
+	{
+		key = "PageDown",
+		mods = "NONE",
+		action = wezterm.action.ScrollByLine(3),
+	},
+	{
 		key = "Enter",
 		mods = "CMD|SHIFT",
 		action = wezterm.action.SpawnCommandInNewWindow({
-			args = { "bash" },
+			args = { "zsh" },
 		}),
 	},
 
@@ -140,4 +150,8 @@ config.quick_select_patterns = {
 }
 
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
+-- config.send_composed_key_when_left_alt_is_pressed = false
+-- config.send_composed_key_when_right_alt_is_pressed = false
+-- config.treat_left_alt_as_alt = true
+-- config.treat_right_alt_as_alt = true
 return config
