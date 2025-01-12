@@ -33,7 +33,7 @@ config.initial_rows = 35
 config.initial_cols = 110
 config.color_scheme = depending_on_appearance({
 	light = "Tokyo Night Moon", --"PaperColor Light (base16)", --"Gruvbox light, hard (base16)", -- "Tokyo Night Moon", -- "Vs Code Light+ (Gogh)", -- 3024 (light) (terminal.sexy)", --One Light (Gogh)", --Vs Code Light+ (Gogh)", -- Catppuccin Latte',
-	dark = "Gruvbox dark, hard (base16)", -- "Papercolor Dark (Gogh)", --"Tokyo Night", -- "Vs Code Dark+ (Gogh)", --3024 (dark) (terminal.sexy)", -- Catppuccin Mocha",
+	dark = "Tokyo Night", -- Gruvbox dark, hard (base16)", -- "Papercolor Dark (Gogh)", --"Tokyo Night", -- "Vs Code Dark+ (Gogh)", --3024 (dark) (terminal.sexy)", -- Catppuccin Mocha",
 })
 config.use_fancy_tab_bar = false
 config.tab_max_width = 32
@@ -141,6 +141,9 @@ config.keys = {
 	{ key = "5", mods = "CTRL", action = wezterm.action({ ActivateTab = 4 }) },
 	{ key = "6", mods = "CTRL", action = wezterm.action({ ActivateTab = 5 }) },
 	{ key = "7", mods = "CTRL", action = wezterm.action({ ActivateTab = 6 }) },
+
+  -- close current pane
+  { key = "w", mods = "CTRL", action = act({ CloseCurrentPane = { confirm = true } }) },
 }
 
 config.pane_focus_follows_mouse = false
