@@ -9,10 +9,10 @@ keymap("n", "<Space>", "", opts)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-vim.keymap.set("n", ";", ":", {
+vim.keymap.set({"n", "x", "o"}, ";", ":", {
     noremap = true
 }) -- Press ; to enter command mode
-vim.keymap.set("n", ":", ";", {
+vim.keymap.set({"n", "x", "o"}, ":", ";", {
     noremap = true
 }) -- Press : to repeat f/t/F/T
 
@@ -28,7 +28,7 @@ vim.opt.timeoutlen = 1000
 vim.o.ttimeoutlen = 50 -- Lower value makes Esc more responsive
 
 -- Preview substitutions live, as you type!
-vim.opt.inccommand = 'split'
+vim.opt.inccommand = "split"
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -66,16 +66,19 @@ keymap({"n", "v"}, "<leader>ff", "<cmd>lua require('vscode').action('workbench.a
 keymap({"n", "v"}, "<leader>cp", "<cmd>lua require('vscode').action('workbench.action.showCommands')<CR>")
 keymap({"n", "v"}, "<leader>pr", "<cmd>lua require('vscode').action('code-runner.run')<CR>")
 keymap({"n", "v"}, "<leader>gg", "<cmd>lua require('vscode').action('lazygit-vscode.toggle')<CR>")
-keymap({"n", "v"}, "<leader>/", "<cmd>lua require('vscode').action('workbench.action.showAllEditorsByMostRecentlyUsed')<CR>")
+keymap({"n", "v"}, "<leader>/",
+    "<cmd>lua require('vscode').action('workbench.action.showAllEditorsByMostRecentlyUsed')<CR>")
 keymap({"n", "v"}, "<leader>.", "<cmd>lua require('vscode').action('workbench.action.quickOpen')<CR>")
 keymap({"n", "v"}, "<C-h>", "<cmd>lua require('vscode').action('workbench.action.focusLeftGroup')<CR>")
 keymap({"n", "v"}, "<C-l>", "<cmd>lua require('vscode').action('workbench.action.focusRightGroup')<CR>")
 keymap({"n", "v"}, "<C-k>", "<cmd>lua require('vscode').action('workbench.action.focusAboveGroup')<CR>")
 keymap({"n", "v"}, "<C-j>", "<cmd>lua require('vscode').action('workbench.action.focusBelowGroup')<CR>")
 keymap({"n", "v"}, "<leader>bo", "<cmd>lua require('vscode').action('workbench.action.closeOtherEditors')<CR>")
-keymap({"n", "v"}, "<leader>d", "<cmd>lua require('vscode').action('workbench.debug.action.toggleRepl')<CR>") -- open debug console 
-keymap({"n", "v"}, "<leader>cr", "<cmd>lua require('vscode').action('editor.action.rename')<CR>") -- open debug console 
-
+keymap({"n", "v"}, "<leader>d", "<cmd>lua require('vscode').action('workbench.debug.action.toggleRepl')<CR>") -- open debug console
+keymap({"n", "v"}, "<leader>cr", "<cmd>lua require('vscode').action('editor.action.rename')<CR>") -- open debug console
+keymap("n", "[d", "<cmd>lua require('vscode').action('editor.action.marker.next')<CR>", opts) -- next error]")
+keymap("n", "]d", "<cmd>lua require('vscode').action('editor.action.marker.prev')<CR>", opts) -- previous error
+keymap("n", "<leader>w", "<cmd>lua require('vscode').action('editor.action.formatDocument')<CR>", opts) -- close current editor
 
 --
 -- jupyter
@@ -122,49 +125,69 @@ keymap({"n", "v"}, "<leader>h9", "<cmd>lua require('vscode').action('vscode-harp
 keymap({"n", "v"}, "<leader>pa", "<cmd>lua require('vscode').action('projectManager.saveProject')<CR>")
 keymap({"n", "v"}, "<leader>po", "<cmd>lua require('vscode').action('projectManager.listProjectsNewWindow')<CR>")
 keymap({"n", "v"}, "<leader>pe", "<cmd>lua require('vscode').action('projectManager.editProjects')<CR>")
+keymap("v", "(", "S(", {
+    desc = "Surround with parantheses",
+    remap = true
+})
+keymap("v", "{", "S{", {
+    desc = "Surround with braces",
+    remap = true
+})
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-    local out = vim.fn.system {'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath}
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local out = vim.fn.system({"git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath})
     if vim.v.shell_error ~= 0 then
-        error('Error cloning lazy.nvim:\n' .. out)
+        error("Error cloning lazy.nvim:\n" .. out)
     end
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
-require('lazy').setup({{
-    "ggandor/leap.nvim",
-    enabled = true,
-    keys = {{
-        "s",
-        mode = {"n", "x", "o"},
-        desc = "Leap Forward to"
-    }, {
-        "S",
-        mode = {"n", "x", "o"},
-        desc = "Leap Backward to"
-    }, {
-        "gs",
-        mode = {"n", "x", "o"},
-        desc = "Leap from Windows"
-    }},
-    config = function(_, opts)
-        local leap = require("leap")
-        for k, v in pairs(opts) do
-            leap.opts[k] = v
-        end
-        -- leap.add_default_mappings(true)
-        vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap-anywhere)')
-        -- vim.keymap.set('x', 's', '<Plug>(leap)')
-        -- vim.keymap.set('o', 's', '<Plug>(leap-forward)')
-        -- vim.keymap.set('o', 'S', '<Plug>(leap-backward)')
-
-        vim.keymap.del({"x", "o"}, "x")
-        vim.keymap.del({"x", "o"}, "X")
-        -- require('leap').opts.safe_labels = {}
+require("lazy").setup({ --     {
+--     "ggandor/leap.nvim",
+--     enabled = true,
+--     keys = {{
+--         "s",
+--         mode = {"n", "x", "o"},
+--         desc = "Leap Forward to"
+--     }, {
+--         "S",
+--         mode = {"n", "x", "o"},
+--         desc = "Leap Backward to"
+--     }, {
+--         "gs",
+--         mode = {"n", "x", "o"},
+--         desc = "Leap from Windows"
+--     }},
+--     config = function(_, opts)
+--         local leap = require("leap")
+--         for k, v in pairs(opts) do
+--             leap.opts[k] = v
+--         end
+--         -- leap.add_default_mappings(true)
+--         vim.keymap.set({"n", "x", "o"}, "s", "<Plug>(leap-anywhere)")
+--         -- vim.keymap.set('x', 's', '<Plug>(leap)')
+--         -- vim.keymap.set('o', 's', '<Plug>(leap-forward)')
+--         -- vim.keymap.set('o', 'S', '<Plug>(leap-backward)')
+--         -- -- Safely delete mappings if they exist
+--         -- local function safe_del(mode, key)
+--         --     local success, _ = pcall(vim.keymap.del, mode, key)
+--         --     if not success then
+--         --         print("Mapping not found for " .. key)
+--         --     end
+--         -- end
+--         -- safe_del({"x", "o"}, "x")
+--         -- safe_del({"x", "o"}, "X")
+--     end,
+--     event = "VeryLazy"
+-- }, 
+{
+    "kylechui/nvim-surround",
+    event = "VeryLazy",
+    config = function()
+        require("nvim-surround").setup()
     end
 }})
-

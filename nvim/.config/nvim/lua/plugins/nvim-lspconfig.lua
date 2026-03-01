@@ -47,6 +47,9 @@ return {
           require("clangd_extensions").setup(vim.tbl_deep_extend("force", clangd_ext_opts or {}, { server = opts }))
           return false
         end,
+        rust_analyzer = function()
+          return true
+        end,
       },
     },
   },

@@ -5,6 +5,13 @@
 local map = vim.keymap.set
 map("n", "<leader>k", "<cmd>WeztermSpawn lazydocker<CR>", { desc = "Toggle LazyDocker", noremap = true, silent = true })
 
+vim.keymap.set("n", ";", ":", {
+  noremap = true,
+}) -- Press ; to enter command mode
+vim.keymap.set("n", ":", ";", {
+  noremap = true,
+}) -- Press : to repeat f/t/F/T
+
 local function create_term_buf(_type, size)
   vim.o.splitbelow = true
   vim.o.splitright = true

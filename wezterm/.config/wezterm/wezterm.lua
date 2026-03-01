@@ -14,27 +14,24 @@ local function depending_on_appearance(arg)
 	end
 end
 
-config.color_schemes = {
-	["AMOLED Dark"] = {
-		foreground = "#D0D0D0", -- Light gray text
-		background = "#000000", -- True black background
-		cursor_bg = "#D0D0D0",
-		cursor_border = "#D0D0D0",
-		cursor_fg = "#000000",
-		selection_bg = "#44475a",
-		selection_fg = "#FFFFFF",
-
-		ansi = { "#000000", "#FF5555", "#50FA7B", "#F1FA8C", "#BD93F9", "#FF79C6", "#8BE9FD", "#BFBFBF" },
-		brights = { "#4D4D4D", "#FF6E67", "#5AF78E", "#F4F99D", "#CAA9FA", "#FF92D0", "#9AEDFE", "#E6E6E6" },
-	},
-}
-
 config.initial_rows = 35
 config.initial_cols = 110
-config.color_scheme = depending_on_appearance({
-	light = "Tokyo Night Moon", --"PaperColor Light (base16)", --"Gruvbox light, hard (base16)", -- "Tokyo Night Moon", -- "Vs Code Light+ (Gogh)", -- 3024 (light) (terminal.sexy)", --One Light (Gogh)", --Vs Code Light+ (Gogh)", -- Catppuccin Latte',
-	dark = "Tokyo Night", -- Gruvbox dark, hard (base16)", -- "Papercolor Dark (Gogh)", --"Tokyo Night", -- "Vs Code Dark+ (Gogh)", --3024 (dark) (terminal.sexy)", -- Catppuccin Mocha",
+-- Define the default color scheme based on appearance
+local default_color_scheme = depending_on_appearance({
+	light = "Builtin Solarized Light", --"Tokyo Night Day", -- Color scheme for light mode
+	dark = "Builtin Solarized Dark", -- Color scheme for dark mode
 })
+config.color_scheme = default_color_scheme
+-- local file = io.open(wezterm.config_dir .. "/colorscheme", "r")
+-- if file then
+-- 	config.color_scheme = default_color_scheme
+-- 	-- config.color_scheme = file:read("*a")
+-- 	file:close()
+-- else
+-- 	config.color_scheme = default_color_scheme
+-- 	-- config.color_scheme = "Tokyo Night Day"
+-- end
+
 config.use_fancy_tab_bar = false
 config.tab_max_width = 32
 config.colors = {
@@ -142,8 +139,8 @@ config.keys = {
 	{ key = "6", mods = "CTRL", action = wezterm.action({ ActivateTab = 5 }) },
 	{ key = "7", mods = "CTRL", action = wezterm.action({ ActivateTab = 6 }) },
 
-  -- close current pane
-  { key = "w", mods = "CTRL", action = act({ CloseCurrentPane = { confirm = true } }) },
+	-- close current pane
+	{ key = "w", mods = "CTRL", action = act({ CloseCurrentPane = { confirm = true } }) },
 }
 
 config.pane_focus_follows_mouse = false
@@ -153,8 +150,5 @@ config.quick_select_patterns = {
 }
 
 config.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
--- config.send_composed_key_when_left_alt_is_pressed = false
--- config.send_composed_key_when_right_alt_is_pressed = false
--- config.treat_left_alt_as_alt = true
--- config.treat_right_alt_as_alt = true
+
 return config
