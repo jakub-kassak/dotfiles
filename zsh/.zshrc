@@ -77,7 +77,12 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(
+    git                         # Git shortcuts and features
+    zsh-autosuggestions        # Fish-like autosuggestions
+    zsh-syntax-highlighting    # Fish-like syntax highlighting
+    autojump                   # Smart directory jumping
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -112,3 +117,74 @@ source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+# Ollama Command Helper Configuration
+export ZSH_OLLAMA_MODEL="vitali87/shell-commands-qwen2-1.5b:latest"
+
+function set_ollama_model {
+    if [[ $# -eq 0 ]]; then
+        echo "Current model: $ZSH_OLLAMA_MODEL"
+        echo "Available models:"
+        ollama list | awk 'NR>1 {print $1}'
+    else
+        export ZSH_OLLAMA_MODEL="$1"
+        echo "Ollama model set to: $ZSH_OLLAMA_MODEL"
+    fi
+}
+
+compdef '_values "models" $(ollama list | awk '\''NR>1 {print $1}'\'')' set_ollama_model
+
+function ollama_command_helper {
+    local query="$BUFFER"
+    BUFFER=""
+    echo -e "\n🤔 \e[34mAsking Ollama (using model: $ZSH_OLLAMA_MODEL)...\e[0m"
+    
+    local result
+    result=$(~/.config/zsh/ollama_env/venv/bin/python3 ~/.config/zsh/ollama_env/ollama_helper.py "$query" 2>/dev/null)
+    
+    if [[ $? -ne 0 ]]; then
+        echo -e "\e[31m❌ No command generated.\e[0m"
+        return 1
+    fi
+    
+    local user_query command
+    user_query=$(printf '%s\n' "$result" | jq -r '.user_query')
+    command=$(printf '%s\n' "$result" | jq -r '.command')
+    
+    echo -e "\e[33mYour query:\e[0m $user_query"
+    echo -e "\e[32mGenerated command:\e[0m $command"
+    
+    local yn
+    while true; do
+        echo -n "Execute? [y/N] "
+        read -k 1 yn
+        case $yn in
+            [Yy]* ) 
+                echo
+                eval "$command"
+                break
+                ;;
+            [Nn]* | $'\n' )
+                echo
+                echo "Aborted."
+                break
+                ;;
+            * )
+                ;;
+        esac
+    done
+    
+    zle reset-prompt
+}
+
+zle -N ollama_command_helper
+bindkey '^B' ollama_command_helper   
+export ZSH_OLLAMA_MODEL="gemma3:12B"
+
+
+#################
+### Aliases
+#################
+alias lg='lazygit'
