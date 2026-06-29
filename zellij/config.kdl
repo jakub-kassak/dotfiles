@@ -1,0 +1,58 @@
+// Automatically copy when selecting text
+copy_on_select true
+
+// Use OSC52 to pass clipboard contents through SSH/Docker to the host terminal
+copy_clipboard "system"
+
+default_layout "default"
+pane_frames true
+simplified_ui true
+
+default_shell "zsh"
+
+theme "catppuccin-mocha"
+
+keybinds {
+shared_except "locked" {
+        bind "Alt 1" { GoToTab 1; SwitchToMode "Normal"; }
+        bind "Alt 2" { GoToTab 2; SwitchToMode "Normal"; }
+        bind "Alt 3" { GoToTab 3; SwitchToMode "Normal"; }
+        bind "Alt 4" { GoToTab 4; SwitchToMode "Normal"; }
+        bind "Alt 5" { GoToTab 5; SwitchToMode "Normal"; }
+        bind "Alt 6" { GoToTab 6; SwitchToMode "Normal"; }
+        bind "Alt 7" { GoToTab 7; SwitchToMode "Normal"; }
+        bind "Alt 8" { GoToTab 8; SwitchToMode "Normal"; }
+        bind "Alt 9" { GoToTab 9; SwitchToMode "Normal"; }
+    }
+}
+
+themes {
+    catppuccin-mocha {
+        bg "#1e1e2e"
+        fg "#cdd6f4"
+        red "#f38ba8"
+        green "#181825"
+        blue "#89b4fa"
+        yellow "#f9e2af"
+        magenta "#f5c2e7"
+        orange "#181825"
+        cyan "#89dceb"
+        black "#181825"
+        white "#181825"
+        
+        frame_selected {
+            base "#181825"
+            emphasis_0 "#181825"
+            emphasis_1 "#181825"
+            emphasis_2 "#181825"
+            emphasis_3 "#181825"
+        }
+        frame_unselected {
+            base "#181825"
+            emphasis_0 "#181825"
+            emphasis_1 "#181825"
+            emphasis_2 "#181825"
+            emphasis_3 "#181825"
+        }
+    }
+}

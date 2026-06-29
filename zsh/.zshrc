@@ -118,8 +118,25 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# If we are in the DevContainer, override the Powerlevel10k prompt symbol to '$'
+if [[ -d "/workspaces/AgentDojo" ]] || [[ -n "$CLAUDE_CODE_USE_VERTEX" ]]; then
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='$'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VICMD_CONTENT_EXPANSION='$'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIVIS_CONTENT_EXPANSION='$'
+fi
+
 # Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+if [ -f ~/.fzf.zsh ]; then
+  # Mac Homebrew default installation
+  source ~/.fzf.zsh
+elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
+  # Debian / Ubuntu (DevContainer) via apt
+  source /usr/share/doc/fzf/examples/key-bindings.zsh
+  source /usr/share/doc/fzf/examples/completion.zsh
+else
+  # Fallback for newer fzf versions
+  source <(fzf --zsh 2>/dev/null) || true
+fi
 # Ollama Command Helper Configuration
 export ZSH_OLLAMA_MODEL="vitali87/shell-commands-qwen2-1.5b:latest"
 
@@ -181,10 +198,107 @@ function ollama_command_helper {
 
 zle -N ollama_command_helper
 bindkey '^B' ollama_command_helper   
-export ZSH_OLLAMA_MODEL="gemma3:12B"
+export ZSH_OLLAMA_MODEL="qwen3:14b"
 
+
+### 1Password
+eval "$(op completion zsh)"; compdef _op op
 
 #################
 ### Aliases
 #################
 alias lg='lazygit'
+function gemini-docker {
+    local tty_args=""
+    if [ -t 0 ]; then
+        tty_args="--tty"
+    fi
+
+    docker run -i ${tty_args} --rm \
+        -v "$(pwd):/home/gemini/workspace" \
+        -v "$HOME/.gemini:/home/gemini/.gemini" \
+        -e DEFAULT_UID=$(id -u) \
+        -e DEFAULT_GID=$(id -g) \
+        -e GEMINI_API_KEY=$GEMINI_API_KEY \
+        -e TERM=$TERM \
+        tgagor/gemini-cli "$@"
+        # -e COLORTERM=truecolor \
+}
+
+#################
+### Envs
+#################
+# API Keys werden aus einer sicheren, lokalen Datei geladen, die NICHT auf GitHub landet
+if [ -f "$HOME/.zsh_secrets" ]; then
+    source "$HOME/.zsh_secrets"
+fi
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+
+# claude code
+export CLAUDE_CODE_USE_VERTEX=1
+export ANTHROPIC_VERTEX_PROJECT_ID=aipril-455019
+export ANTHROPIC_VERTEX_LOCATION="global"
+
+export PATH="$HOME/.cabal/bin:$HOME/.ghcup/bin:$PATH"
+
+
+# Automatically activate Python virtual environment (.venv) if it exists in the current directory
+# or any parent directory.
+function auto_activate_venv() {
+    # If we are already in a virtualenv, and we left its directory, deactivate it
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        parentdir="$(dirname "$VIRTUAL_ENV")"
+        if [[ "$PWD"/ != "$parentdir"/* && "$PWD" != "$parentdir" ]]; then
+            deactivate
+        fi
+    fi
+
+    # If we are not in a virtualenv, look for .venv
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        local current_dir="$PWD"
+        while [[ "$current_dir" != "/" ]]; do
+            if [[ -f "$current_dir/.venv/bin/activate" ]]; then
+                source "$current_dir/.venv/bin/activate"
+                break
+            fi
+            current_dir="$(dirname "$current_dir")"
+        done
+    fi
+}
+
+# Run the check every time the directory changes
+autoload -U add-zsh-hook
+add-zsh-hook chpwd auto_activate_venv
+
+# Also run it once when the shell starts
+auto_activate_venv
+
+
+# AgentDojo Pipeline Tools (Only load if inside the DevContainer / if the file exists)
+if [ -f "/workspaces/AgentDojo/tools/vd_pipeline.sh" ]; then
+    source "/workspaces/AgentDojo/tools/vd_pipeline.sh"
+fi
+
+
+# Automatically load .env file if it exists in the workspace
+local env_file="/workspaces/AgentDojo/.env"
+if [ -f "$env_file" ]; then
+    set -a
+    source "$env_file"
+    set +a
+fi
+
+# --- Cross-Environment Clipboard (macOS & Dev Container) ---
+# Kopiert den Input in die System-Zwischenablage.
+# Nutzung: echo "hallo" | cb
+cb() {
+  if command -v pbcopy >/dev/null 2>&1; then
+    # Host (macOS)
+    pbcopy
+  else
+    # Dev Container / Linux (via OSC 52 Escape Sequence)
+    # Wird vom integrierten VS Code Terminal, WezTerm, iTerm2 etc. direkt an das macOS Clipboard weitergeleitet
+    printf "\033]52;c;%s\007" "$(cat | base64 | tr -d '\n' | tr -d '\r')"
+  fi
+}
+alias clip="cb"
