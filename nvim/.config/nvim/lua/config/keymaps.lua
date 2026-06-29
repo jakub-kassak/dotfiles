@@ -90,3 +90,14 @@ end
 
 vim.api.nvim_set_keymap("n", "<silent><F9>", ":lua BuildAndDebug()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<silent><F10>", ":lua BuildAndRun()<CR>", { noremap = true, silent = true })
+
+-- Direct Surround keymaps in visual mode (using mini.surround)
+local map = vim.keymap.set
+map("x", "(", "gsa)", { remap = true, desc = "Surround with ()" })
+map("x", ")", "gsa(", { remap = true, desc = "Surround with ( )" })
+map("x", "[", "gsa]", { remap = true, desc = "Surround with []" })
+map("x", "]", "gsa[", { remap = true, desc = "Surround with [ ]" })
+map("x", "{", "gsa}", { remap = true, desc = "Surround with {}" })
+map("x", "}", "gsa{", { remap = true, desc = "Surround with { }" })
+map("x", '"', 'gsa"', { remap = true, desc = "Surround with double quotes" })
+map("x", "'", "gsa'", { remap = true, desc = "Surround with single quotes" })
