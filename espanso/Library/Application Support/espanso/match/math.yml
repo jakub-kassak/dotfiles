@@ -294,6 +294,8 @@ matches:
     replace: "←"
   - trigger: ";mapsto"
     replace: "↦"
+  - trigger: ";mapsfrom"
+    replace: "↤"
   - trigger: ";uparrow"
     replace: "↑"
   - trigger: ";downarrow"
