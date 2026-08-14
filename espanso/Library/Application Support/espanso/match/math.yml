@@ -258,7 +258,7 @@ matches:
     replace: "⊥"
   - trigger: ";bot"
     replace: "⊥"
-  - trigger: ";top"
+  - trigger: ";tp"
     replace: "⊤"
   - trigger: ";parallel"
     replace: "∥"
