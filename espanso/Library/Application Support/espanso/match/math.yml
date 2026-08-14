@@ -1,0 +1,1019 @@
+# espanso match file — mathematical symbols
+#
+# Type the trigger (e.g. ;sigma) and it expands to the Unicode symbol (σ).
+# The `;` prefix avoids clashing with real LaTeX commands. Triggers are plain
+# (no `word: true`) so they fire in terminals/nvim too — word triggers need
+# cursor context that terminals don't expose. The unusual `;` prefix keeps
+# accidental mid-word expansion unlikely.
+#
+# yaml-language-server: $schema=https://raw.githubusercontent.com/espanso/espanso/dev/schemas/match.schema.json
+
+matches:
+  # ------------------------------------------------------------------
+  # Lowercase Greek
+  # ------------------------------------------------------------------
+  - trigger: ";alpha"
+    replace: "α"
+  - trigger: ";beta"
+    replace: "β"
+  - trigger: ";gamma"
+    replace: "γ"
+  - trigger: ";delta"
+    replace: "δ"
+  - trigger: ";epsilon"
+    replace: "ε"
+  - trigger: ";varepsilon"
+    replace: "ε"
+  - trigger: ";zeta"
+    replace: "ζ"
+  - trigger: ";eta"
+    replace: "η"
+  - trigger: ";theta"
+    replace: "θ"
+  - trigger: ";vartheta"
+    replace: "ϑ"
+  - trigger: ";iota"
+    replace: "ι"
+  - trigger: ";kappa"
+    replace: "κ"
+  - trigger: ";lambda"
+    replace: "λ"
+  - trigger: ";mu"
+    replace: "μ"
+  - trigger: ";nu"
+    replace: "ν"
+  - trigger: ";xi"
+    replace: "ξ"
+  - trigger: ";omicron"
+    replace: "ο"
+  - trigger: ";pi"
+    replace: "π"
+  - trigger: ";varpi"
+    replace: "ϖ"
+  - trigger: ";rho"
+    replace: "ρ"
+  - trigger: ";varrho"
+    replace: "ϱ"
+  - trigger: ";sigma"
+    replace: "σ"
+  - trigger: ";varsigma"
+    replace: "ς"
+  - trigger: ";tau"
+    replace: "τ"
+  - trigger: ";upsilon"
+    replace: "υ"
+  - trigger: ";phi"
+    replace: "φ"
+  - trigger: ";varphi"
+    replace: "φ"
+  - trigger: ";chi"
+    replace: "χ"
+  - trigger: ";psi"
+    replace: "ψ"
+  - trigger: ";omega"
+    replace: "ω"
+  - trigger: ";ell"
+    replace: "ℓ"
+
+  # ------------------------------------------------------------------
+  # Uppercase Greek
+  # ------------------------------------------------------------------
+  - trigger: ";Alpha"
+    replace: "Α"
+  - trigger: ";Beta"
+    replace: "Β"
+  - trigger: ";Gamma"
+    replace: "Γ"
+  - trigger: ";Delta"
+    replace: "Δ"
+  - trigger: ";Epsilon"
+    replace: "Ε"
+  - trigger: ";Zeta"
+    replace: "Ζ"
+  - trigger: ";Eta"
+    replace: "Η"
+  - trigger: ";Theta"
+    replace: "Θ"
+  - trigger: ";Iota"
+    replace: "Ι"
+  - trigger: ";Kappa"
+    replace: "Κ"
+  - trigger: ";Lambda"
+    replace: "Λ"
+  - trigger: ";Mu"
+    replace: "Μ"
+  - trigger: ";Nu"
+    replace: "Ν"
+  - trigger: ";Xi"
+    replace: "Ξ"
+  - trigger: ";Omicron"
+    replace: "Ο"
+  - trigger: ";Pi"
+    replace: "Π"
+  - trigger: ";Rho"
+    replace: "Ρ"
+  - trigger: ";Sigma"
+    replace: "Σ"
+  - trigger: ";Tau"
+    replace: "Τ"
+  - trigger: ";Upsilon"
+    replace: "Υ"
+  - trigger: ";Phi"
+    replace: "Φ"
+  - trigger: ";Chi"
+    replace: "Χ"
+  - trigger: ";Psi"
+    replace: "Ψ"
+  - trigger: ";Omega"
+    replace: "Ω"
+
+  # ------------------------------------------------------------------
+  # Binary operators
+  # ------------------------------------------------------------------
+  - trigger: ";cdot"
+    replace: "·"
+  - trigger: ";cdots"
+    replace: "⋯"
+  - trigger: ";times"
+    replace: "×"
+  - trigger: ";div"
+    replace: "÷"
+  - trigger: ";pm"
+    replace: "±"
+  - trigger: ";mp"
+    replace: "∓"
+  - trigger: ";ast"
+    replace: "∗"
+  - trigger: ";star"
+    replace: "⋆"
+  - trigger: ";circ"
+    replace: "∘"
+  - trigger: ";bullet"
+    replace: "•"
+  - trigger: ";cap"
+    replace: "∩"
+  - trigger: ";cup"
+    replace: "∪"
+  - trigger: ";sqcap"
+    replace: "⊓"
+  - trigger: ";sqcup"
+    replace: "⊔"
+  - trigger: ";uplus"
+    replace: "⊎"
+  - trigger: ";wedge"
+    replace: "∧"
+  - trigger: ";vee"
+    replace: "∨"
+  - trigger: ";setminus"
+    replace: "∖"
+  - trigger: ";otimes"
+    replace: "⊗"
+  - trigger: ";oplus"
+    replace: "⊕"
+  - trigger: ";odot"
+    replace: "⊙"
+  - trigger: ";diameter"
+    replace: "⌀"
+  - trigger: ";wr"
+    replace: "≀"
+  - trigger: ";diamond"
+    replace: "⋄"
+  - trigger: ";bigcap"
+    replace: "⋂"
+  - trigger: ";bigcup"
+    replace: "⋃"
+  - trigger: ";bigvee"
+    replace: "⋁"
+  - trigger: ";bigwedge"
+    replace: "⋀"
+  - trigger: ";bigotimes"
+    replace: "⨂"
+  - trigger: ";bigoplus"
+    replace: "⨁"
+  - trigger: ";bigodot"
+    replace: "⨀"
+  - trigger: ";biguplus"
+    replace: "⨄"
+  - trigger: ";bigsqcap"
+    replace: "⨅"
+  - trigger: ";bigsqcup"
+    replace: "⨆"
+
+  # ------------------------------------------------------------------
+  # Relations
+  # ------------------------------------------------------------------
+  - trigger: ";leq"
+    replace: "≤"
+  - trigger: ";geq"
+    replace: "≥"
+  - trigger: ";leqslant"
+    replace: "⩽"
+  - trigger: ";geqslant"
+    replace: "⩾"
+  - trigger: ";neq"
+    replace: "≠"
+  - trigger: ";sim"
+    replace: "∼"
+  - trigger: ";simeq"
+    replace: "≃"
+  - trigger: ";cong"
+    replace: "≅"
+  - trigger: ";approx"
+    replace: "≈"
+  - trigger: ";equiv"
+    replace: "≡"
+  - trigger: ";propto"
+    replace: "∝"
+  - trigger: ";prec"
+    replace: "≺"
+  - trigger: ";succ"
+    replace: "≻"
+  - trigger: ";preceq"
+    replace: "⪯"
+  - trigger: ";succeq"
+    replace: "⪰"
+  - trigger: ";ll"
+    replace: "≪"
+  - trigger: ";gg"
+    replace: "≫"
+  - trigger: ";subset"
+    replace: "⊂"
+  - trigger: ";supset"
+    replace: "⊃"
+  - trigger: ";subseteq"
+    replace: "⊆"
+  - trigger: ";supseteq"
+    replace: "⊇"
+  - trigger: ";sqsubseteq"
+    replace: "⊑"
+  - trigger: ";sqsupseteq"
+    replace: "⊒"
+  - trigger: ";in"
+    replace: "∈"
+  - trigger: ";notin"
+    replace: "∉"
+  - trigger: ";ni"
+    replace: "∋"
+  - trigger: ";perp"
+    replace: "⊥"
+  - trigger: ";parallel"
+    replace: "∥"
+  - trigger: ";mid"
+    replace: "∣"
+  - trigger: ";nmid"
+    replace: "∤"
+  - trigger: ";asymp"
+    replace: "≍"
+  - trigger: ";bowtie"
+    replace: "⋈"
+  - trigger: ";models"
+    replace: "⊧"
+  - trigger: ";vdash"
+    replace: "⊢"
+  - trigger: ";dashv"
+    replace: "⊣"
+
+  # ------------------------------------------------------------------
+  # Arrows
+  # ------------------------------------------------------------------
+  - trigger: ";rightarrow"
+    replace: "→"
+  - trigger: ";leftarrow"
+    replace: "←"
+  - trigger: ";leftrightarrow"
+    replace: "↔"
+  - trigger: ";Rightarrow"
+    replace: "⇒"
+  - trigger: ";Leftarrow"
+    replace: "⇐"
+  - trigger: ";Leftrightarrow"
+    replace: "⇔"
+  - trigger: ";to"
+    replace: "→"
+  - trigger: ";gets"
+    replace: "←"
+  - trigger: ";mapsto"
+    replace: "↦"
+  - trigger: ";uparrow"
+    replace: "↑"
+  - trigger: ";downarrow"
+    replace: "↓"
+  - trigger: ";updownarrow"
+    replace: "↕"
+  - trigger: ";Uparrow"
+    replace: "⇑"
+  - trigger: ";Downarrow"
+    replace: "⇓"
+  - trigger: ";Updownarrow"
+    replace: "⇕"
+  - trigger: ";nearrow"
+    replace: "↗"
+  - trigger: ";searrow"
+    replace: "↘"
+  - trigger: ";nwarrow"
+    replace: "↖"
+  - trigger: ";swarrow"
+    replace: "↙"
+  - trigger: ";rightharpoonup"
+    replace: "⇀"
+  - trigger: ";rightharpoondown"
+    replace: "⇁"
+  - trigger: ";leftharpoonup"
+    replace: "↼"
+  - trigger: ";leftharpoondown"
+    replace: "↽"
+  - trigger: ";hookrightarrow"
+    replace: "↪"
+  - trigger: ";hookleftarrow"
+    replace: "↩"
+  - trigger: ";leadsto"
+    replace: "⇝"
+
+  # ------------------------------------------------------------------
+  # Misc symbols
+  # ------------------------------------------------------------------
+  - trigger: ";infty"
+    replace: "∞"
+  - trigger: ";partial"
+    replace: "∂"
+  - trigger: ";nabla"
+    replace: "∇"
+  - trigger: ";forall"
+    replace: "∀"
+  - trigger: ";exists"
+    replace: "∃"
+  - trigger: ";nexists"
+    replace: "∄"
+  - trigger: ";neg"
+    replace: "¬"
+  - trigger: ";lnot"
+    replace: "¬"
+  - trigger: ";emptyset"
+    replace: "∅"
+  - trigger: ";varnothing"
+    replace: "∅"
+  - trigger: ";angle"
+    replace: "∠"
+  - trigger: ";measuredangle"
+    replace: "∡"
+  - trigger: ";degree"
+    replace: "°"
+  - trigger: ";prime"
+    replace: "′"
+  - trigger: ";dprime"
+    replace: "″"
+  - trigger: ";dagger"
+    replace: "†"
+  - trigger: ";ddagger"
+    replace: "‡"
+  - trigger: ";dots"
+    replace: "…"
+  - trigger: ";ldots"
+    replace: "…"
+  - trigger: ";vdots"
+    replace: "⋮"
+  - trigger: ";ddots"
+    replace: "⋱"
+  - trigger: ";hbar"
+    replace: "ℏ"
+  - trigger: ";hslash"
+    replace: "ℏ"
+  - trigger: ";imath"
+    replace: "ı"
+  - trigger: ";jmath"
+    replace: "ȷ"
+  - trigger: ";Re"
+    replace: "ℜ"
+  - trigger: ";Im"
+    replace: "ℑ"
+  - trigger: ";aleph"
+    replace: "ℵ"
+  - trigger: ";beth"
+    replace: "ℶ"
+  - trigger: ";complement"
+    replace: "∁"
+  - trigger: ";sum"
+    replace: "∑"
+  - trigger: ";prod"
+    replace: "∏"
+  - trigger: ";coprod"
+    replace: "∐"
+  - trigger: ";int"
+    replace: "∫"
+  - trigger: ";iint"
+    replace: "∬"
+  - trigger: ";iiint"
+    replace: "∭"
+  - trigger: ";oint"
+    replace: "∮"
+  - trigger: ";sqrt"
+    replace: "√"
+  - trigger: ";cuberoot"
+    replace: "∛"
+  - trigger: ";fourthroot"
+    replace: "∜"
+  - trigger: ";triangle"
+    replace: "△"
+  - trigger: ";square"
+    replace: "□"
+  - trigger: ";lozenge"
+    replace: "◊"
+  - trigger: ";checkmark"
+    replace: "✓"
+  - trigger: ";ballotx"
+    replace: "✗"
+  - trigger: ";natural"
+    replace: "♮"
+  - trigger: ";flat"
+    replace: "♭"
+  - trigger: ";sharp"
+    replace: "♯"
+
+  # ------------------------------------------------------------------
+  # Subscripts  (type the base, then ;_x  e.g.  l;_x  ->  lₓ )
+  # Only a partial set of letters exist as Unicode subscripts.
+  # ------------------------------------------------------------------
+  - trigger: ";_0"
+    replace: "₀"
+  - trigger: ";_1"
+    replace: "₁"
+  - trigger: ";_2"
+    replace: "₂"
+  - trigger: ";_3"
+    replace: "₃"
+  - trigger: ";_4"
+    replace: "₄"
+  - trigger: ";_5"
+    replace: "₅"
+  - trigger: ";_6"
+    replace: "₆"
+  - trigger: ";_7"
+    replace: "₇"
+  - trigger: ";_8"
+    replace: "₈"
+  - trigger: ";_9"
+    replace: "₉"
+  - trigger: ";_+"
+    replace: "₊"
+  - trigger: ";_-"
+    replace: "₋"
+  - trigger: ";_="
+    replace: "₌"
+  - trigger: ";_("
+    replace: "₍"
+  - trigger: ";_)"
+    replace: "₎"
+  - trigger: ";_a"
+    replace: "ₐ"
+  - trigger: ";_e"
+    replace: "ₑ"
+  - trigger: ";_h"
+    replace: "ₕ"
+  - trigger: ";_i"
+    replace: "ᵢ"
+  - trigger: ";_j"
+    replace: "ⱼ"
+  - trigger: ";_k"
+    replace: "ₖ"
+  - trigger: ";_l"
+    replace: "ₗ"
+  - trigger: ";_m"
+    replace: "ₘ"
+  - trigger: ";_n"
+    replace: "ₙ"
+  - trigger: ";_o"
+    replace: "ₒ"
+  - trigger: ";_p"
+    replace: "ₚ"
+  - trigger: ";_r"
+    replace: "ᵣ"
+  - trigger: ";_s"
+    replace: "ₛ"
+  - trigger: ";_t"
+    replace: "ₜ"
+  - trigger: ";_u"
+    replace: "ᵤ"
+  - trigger: ";_v"
+    replace: "ᵥ"
+  - trigger: ";_x"
+    replace: "ₓ"
+
+  # ------------------------------------------------------------------
+  # Superscripts  (type the base, then ;^x  e.g.  x;^2  ->  x² )
+  # All 26 lowercase letters exist; uppercase set is partial.
+  # ------------------------------------------------------------------
+  - trigger: ";^0"
+    replace: "⁰"
+  - trigger: ";^1"
+    replace: "¹"
+  - trigger: ";^2"
+    replace: "²"
+  - trigger: ";^3"
+    replace: "³"
+  - trigger: ";^4"
+    replace: "⁴"
+  - trigger: ";^5"
+    replace: "⁵"
+  - trigger: ";^6"
+    replace: "⁶"
+  - trigger: ";^7"
+    replace: "⁷"
+  - trigger: ";^8"
+    replace: "⁸"
+  - trigger: ";^9"
+    replace: "⁹"
+  - trigger: ";^+"
+    replace: "⁺"
+  - trigger: ";^-"
+    replace: "⁻"
+  - trigger: ";^="
+    replace: "⁼"
+  - trigger: ";^("
+    replace: "⁽"
+  - trigger: ";^)"
+    replace: "⁾"
+  - trigger: ";^a"
+    replace: "ᵃ"
+  - trigger: ";^b"
+    replace: "ᵇ"
+  - trigger: ";^c"
+    replace: "ᶜ"
+  - trigger: ";^d"
+    replace: "ᵈ"
+  - trigger: ";^e"
+    replace: "ᵉ"
+  - trigger: ";^f"
+    replace: "ᶠ"
+  - trigger: ";^g"
+    replace: "ᵍ"
+  - trigger: ";^h"
+    replace: "ʰ"
+  - trigger: ";^i"
+    replace: "ⁱ"
+  - trigger: ";^j"
+    replace: "ʲ"
+  - trigger: ";^k"
+    replace: "ᵏ"
+  - trigger: ";^l"
+    replace: "ˡ"
+  - trigger: ";^m"
+    replace: "ᵐ"
+  - trigger: ";^n"
+    replace: "ⁿ"
+  - trigger: ";^o"
+    replace: "ᵒ"
+  - trigger: ";^p"
+    replace: "ᵖ"
+  - trigger: ";^r"
+    replace: "ʳ"
+  - trigger: ";^s"
+    replace: "ˢ"
+  - trigger: ";^t"
+    replace: "ᵗ"
+  - trigger: ";^u"
+    replace: "ᵘ"
+  - trigger: ";^v"
+    replace: "ᵛ"
+  - trigger: ";^w"
+    replace: "ʷ"
+  - trigger: ";^x"
+    replace: "ˣ"
+  - trigger: ";^y"
+    replace: "ʸ"
+  - trigger: ";^z"
+    replace: "ᶻ"
+  - trigger: ";^A"
+    replace: "ᴬ"
+  - trigger: ";^B"
+    replace: "ᴮ"
+  - trigger: ";^D"
+    replace: "ᴰ"
+  - trigger: ";^E"
+    replace: "ᴱ"
+  - trigger: ";^G"
+    replace: "ᴳ"
+  - trigger: ";^H"
+    replace: "ᴴ"
+  - trigger: ";^I"
+    replace: "ᴵ"
+  - trigger: ";^J"
+    replace: "ᴶ"
+  - trigger: ";^K"
+    replace: "ᴷ"
+  - trigger: ";^L"
+    replace: "ᴸ"
+  - trigger: ";^M"
+    replace: "ᴹ"
+  - trigger: ";^N"
+    replace: "ᴺ"
+  - trigger: ";^O"
+    replace: "ᴼ"
+  - trigger: ";^P"
+    replace: "ᴾ"
+  - trigger: ";^R"
+    replace: "ᴿ"
+  - trigger: ";^T"
+    replace: "ᵀ"
+  - trigger: ";^U"
+    replace: "ᵁ"
+  - trigger: ";^V"
+    replace: "ⱽ"
+  - trigger: ";^W"
+    replace: "ᵂ"
+
+  # ------------------------------------------------------------------
+  # Dynamic sub/superscripts (regex, ' prefix)
+  #
+  # A second prefix ' marks regex triggers that capture the text in
+  # parentheses. e.g.  'ell_(body) -> ℓ_body ,  'x_(n) -> x_n ,
+  # 'T^(ij) -> T^ij. NOTE: regex triggers need cursor context, so these
+  # generally fire in GUI editors but NOT in nvim/terminals — use the
+  # ; glyph triggers above for nvim.
+  # ------------------------------------------------------------------
+  # Symbol-specific subscripts (base name -> its Unicode glyph).
+  # 'name_(text) converts every char in (text) to a Unicode SUBSCRIPT
+  # glyph where one exists (partial: b c d f g q w y z have no subscript).
+  - regex: "'alpha_\\((?P<sub>[^)]+)\\)"
+    replace: "α{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'beta_\\((?P<sub>[^)]+)\\)"
+    replace: "β{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'gamma_\\((?P<sub>[^)]+)\\)"
+    replace: "γ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'delta_\\((?P<sub>[^)]+)\\)"
+    replace: "δ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'epsilon_\\((?P<sub>[^)]+)\\)"
+    replace: "ε{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'varepsilon_\\((?P<sub>[^)]+)\\)"
+    replace: "ε{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'zeta_\\((?P<sub>[^)]+)\\)"
+    replace: "ζ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'eta_\\((?P<sub>[^)]+)\\)"
+    replace: "η{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'theta_\\((?P<sub>[^)]+)\\)"
+    replace: "θ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'iota_\\((?P<sub>[^)]+)\\)"
+    replace: "ι{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'kappa_\\((?P<sub>[^)]+)\\)"
+    replace: "κ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'lambda_\\((?P<sub>[^)]+)\\)"
+    replace: "λ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'mu_\\((?P<sub>[^)]+)\\)"
+    replace: "μ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'nu_\\((?P<sub>[^)]+)\\)"
+    replace: "ν{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'xi_\\((?P<sub>[^)]+)\\)"
+    replace: "ξ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'pi_\\((?P<sub>[^)]+)\\)"
+    replace: "π{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'rho_\\((?P<sub>[^)]+)\\)"
+    replace: "ρ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'sigma_\\((?P<sub>[^)]+)\\)"
+    replace: "σ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'tau_\\((?P<sub>[^)]+)\\)"
+    replace: "τ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'upsilon_\\((?P<sub>[^)]+)\\)"
+    replace: "υ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'phi_\\((?P<sub>[^)]+)\\)"
+    replace: "φ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'varphi_\\((?P<sub>[^)]+)\\)"
+    replace: "φ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'chi_\\((?P<sub>[^)]+)\\)"
+    replace: "χ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'psi_\\((?P<sub>[^)]+)\\)"
+    replace: "ψ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'omega_\\((?P<sub>[^)]+)\\)"
+    replace: "ω{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'ell_\\((?P<sub>[^)]+)\\)"
+    replace: "ℓ{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+
+  # Symbol-specific superscripts.
+  # 'name^(text) converts every char in (text) to a Unicode SUPERSCRIPT
+  # glyph (all lowercase covered; q and uppercase C F Q S X Y Z stay literal).
+  - regex: "'alpha\\^\\((?P<sup>[^)]+)\\)"
+    replace: "α{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'beta\\^\\((?P<sup>[^)]+)\\)"
+    replace: "β{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'gamma\\^\\((?P<sup>[^)]+)\\)"
+    replace: "γ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'delta\\^\\((?P<sup>[^)]+)\\)"
+    replace: "δ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'epsilon\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ε{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'varepsilon\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ε{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'zeta\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ζ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'eta\\^\\((?P<sup>[^)]+)\\)"
+    replace: "η{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'theta\\^\\((?P<sup>[^)]+)\\)"
+    replace: "θ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'iota\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ι{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'kappa\\^\\((?P<sup>[^)]+)\\)"
+    replace: "κ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'lambda\\^\\((?P<sup>[^)]+)\\)"
+    replace: "λ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'mu\\^\\((?P<sup>[^)]+)\\)"
+    replace: "μ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'nu\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ν{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'xi\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ξ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'pi\\^\\((?P<sup>[^)]+)\\)"
+    replace: "π{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'rho\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ρ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'sigma\\^\\((?P<sup>[^)]+)\\)"
+    replace: "σ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'tau\\^\\((?P<sup>[^)]+)\\)"
+    replace: "τ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'upsilon\\^\\((?P<sup>[^)]+)\\)"
+    replace: "υ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'phi\\^\\((?P<sup>[^)]+)\\)"
+    replace: "φ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'varphi\\^\\((?P<sup>[^)]+)\\)"
+    replace: "φ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'chi\\^\\((?P<sup>[^)]+)\\)"
+    replace: "χ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'psi\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ψ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'omega\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ω{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+  - regex: "'ell\\^\\((?P<sup>[^)]+)\\)"
+    replace: "ℓ{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
+
+  # Generic single-letter base: 'x_(n) -> x + sub(n) , 'T^(ij) -> T + sup(ij)
+  - regex: "'(?P<base>[a-zA-Z])_\\((?P<sub>[^)]+)\\)"
+    replace: "{{base}}{{subconv}}"
+    vars:
+      - name: subconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sub \"{{sub}}\""
+  - regex: "'(?P<base>[a-zA-Z])\\^\\((?P<sup>[^)]+)\\)"
+    replace: "{{base}}{{supconv}}"
+    vars:
+      - name: supconv
+        type: shell
+        params:
+          cmd: "python3 \"$HOME/Library/Application Support/espanso/scripts/mathconv.py\" sup \"{{sup}}\""
