@@ -1,10 +1,16 @@
 # espanso match file — mathematical symbols
 #
-# Type the trigger (e.g. ;sigma) and it expands to the Unicode symbol (σ).
-# The `;` prefix avoids clashing with real LaTeX commands. Triggers are plain
-# (no `word: true`) so they fire in terminals/nvim too — word triggers need
-# cursor context that terminals don't expose. The unusual `;` prefix keeps
-# accidental mid-word expansion unlikely.
+# Type the trigger (e.g. ;sigma) and a trailing word separator (space,
+# punctuation) to expand it to the Unicode symbol (σ). The `;` prefix avoids
+# clashing with real LaTeX commands. LaTeX-named triggers use `word: true` so
+# they only fire at a word boundary — this lets long triggers like ;llbracket
+# complete instead of being shadowed by the shorter ;ll. The `word: true`
+# matching uses espanso's keystroke buffer, so it still works in terminals/nvim.
+#
+# Exceptions kept as plain (non-word) triggers so they can fire right after a
+# letter: the ;_x / ;^x glyph-composition family (e.g.  l;_x -> lₓ).
+# The ' -prefix regex triggers (dynamic sub/superscripts) are separate and
+# GUI-only (regex matching needs cursor context terminals don't expose).
 #
 # yaml-language-server: $schema=https://raw.githubusercontent.com/espanso/espanso/dev/schemas/match.schema.json
 
@@ -13,430 +19,633 @@ matches:
   # Lowercase Greek
   # ------------------------------------------------------------------
   - trigger: ";alpha"
+    word: true
     replace: "α"
   - trigger: ";beta"
+    word: true
     replace: "β"
   - trigger: ";gamma"
+    word: true
     replace: "γ"
   - trigger: ";delta"
+    word: true
     replace: "δ"
   - trigger: ";epsilon"
+    word: true
     replace: "ε"
   - trigger: ";varepsilon"
+    word: true
     replace: "ε"
   - trigger: ";zeta"
+    word: true
     replace: "ζ"
   - trigger: ";eta"
+    word: true
     replace: "η"
   - trigger: ";theta"
+    word: true
     replace: "θ"
   - trigger: ";vartheta"
+    word: true
     replace: "ϑ"
   - trigger: ";iota"
+    word: true
     replace: "ι"
   - trigger: ";kappa"
+    word: true
     replace: "κ"
   - trigger: ";lambda"
+    word: true
     replace: "λ"
   - trigger: ";mu"
+    word: true
     replace: "μ"
   - trigger: ";nu"
+    word: true
     replace: "ν"
   - trigger: ";xi"
+    word: true
     replace: "ξ"
   - trigger: ";omicron"
+    word: true
     replace: "ο"
   - trigger: ";pi"
+    word: true
     replace: "π"
   - trigger: ";varpi"
+    word: true
     replace: "ϖ"
   - trigger: ";rho"
+    word: true
     replace: "ρ"
   - trigger: ";varrho"
+    word: true
     replace: "ϱ"
   - trigger: ";sigma"
+    word: true
     replace: "σ"
   - trigger: ";varsigma"
+    word: true
     replace: "ς"
   - trigger: ";tau"
+    word: true
     replace: "τ"
   - trigger: ";upsilon"
+    word: true
     replace: "υ"
   - trigger: ";phi"
+    word: true
     replace: "φ"
   - trigger: ";varphi"
+    word: true
     replace: "φ"
   - trigger: ";chi"
+    word: true
     replace: "χ"
   - trigger: ";psi"
+    word: true
     replace: "ψ"
   - trigger: ";omega"
+    word: true
     replace: "ω"
   - trigger: ";ell"
+    word: true
     replace: "ℓ"
 
   # ------------------------------------------------------------------
   # Uppercase Greek
   # ------------------------------------------------------------------
   - trigger: ";Alpha"
+    word: true
     replace: "Α"
   - trigger: ";Beta"
+    word: true
     replace: "Β"
   - trigger: ";Gamma"
+    word: true
     replace: "Γ"
   - trigger: ";Delta"
+    word: true
     replace: "Δ"
   - trigger: ";Epsilon"
+    word: true
     replace: "Ε"
   - trigger: ";Zeta"
+    word: true
     replace: "Ζ"
   - trigger: ";Eta"
+    word: true
     replace: "Η"
   - trigger: ";Theta"
+    word: true
     replace: "Θ"
   - trigger: ";Iota"
+    word: true
     replace: "Ι"
   - trigger: ";Kappa"
+    word: true
     replace: "Κ"
   - trigger: ";Lambda"
+    word: true
     replace: "Λ"
   - trigger: ";Mu"
+    word: true
     replace: "Μ"
   - trigger: ";Nu"
+    word: true
     replace: "Ν"
   - trigger: ";Xi"
+    word: true
     replace: "Ξ"
   - trigger: ";Omicron"
+    word: true
     replace: "Ο"
   - trigger: ";Pi"
+    word: true
     replace: "Π"
   - trigger: ";Rho"
+    word: true
     replace: "Ρ"
   - trigger: ";Sigma"
+    word: true
     replace: "Σ"
   - trigger: ";Tau"
+    word: true
     replace: "Τ"
   - trigger: ";Upsilon"
+    word: true
     replace: "Υ"
   - trigger: ";Phi"
+    word: true
     replace: "Φ"
   - trigger: ";Chi"
+    word: true
     replace: "Χ"
   - trigger: ";Psi"
+    word: true
     replace: "Ψ"
   - trigger: ";Omega"
+    word: true
     replace: "Ω"
 
   # ------------------------------------------------------------------
   # Binary operators
   # ------------------------------------------------------------------
   - trigger: ";cdot"
+    word: true
     replace: "·"
   - trigger: ";cdots"
+    word: true
     replace: "⋯"
   - trigger: ";times"
+    word: true
     replace: "×"
   - trigger: ";div"
+    word: true
     replace: "÷"
   - trigger: ";pm"
+    word: true
     replace: "±"
   - trigger: ";mp"
+    word: true
     replace: "∓"
   - trigger: ";ast"
+    word: true
     replace: "∗"
   - trigger: ";star"
+    word: true
     replace: "⋆"
   - trigger: ";circ"
+    word: true
     replace: "∘"
   - trigger: ";bullet"
+    word: true
     replace: "•"
   - trigger: ";cap"
+    word: true
     replace: "∩"
   - trigger: ";cup"
+    word: true
     replace: "∪"
   - trigger: ";sqcap"
+    word: true
     replace: "⊓"
   - trigger: ";sqcup"
+    word: true
     replace: "⊔"
   - trigger: ";uplus"
+    word: true
     replace: "⊎"
   - trigger: ";wedge"
+    word: true
     replace: "∧"
   - trigger: ";vee"
+    word: true
     replace: "∨"
   - trigger: ";setminus"
+    word: true
     replace: "∖"
   - trigger: ";otimes"
+    word: true
     replace: "⊗"
   - trigger: ";oplus"
+    word: true
     replace: "⊕"
   - trigger: ";odot"
+    word: true
     replace: "⊙"
   - trigger: ";diameter"
+    word: true
     replace: "⌀"
   - trigger: ";wr"
+    word: true
     replace: "≀"
   - trigger: ";diamond"
+    word: true
     replace: "⋄"
   - trigger: ";bigcap"
+    word: true
     replace: "⋂"
   - trigger: ";bigcup"
+    word: true
     replace: "⋃"
   - trigger: ";bigvee"
+    word: true
     replace: "⋁"
   - trigger: ";bigwedge"
+    word: true
     replace: "⋀"
   - trigger: ";bigotimes"
+    word: true
     replace: "⨂"
   - trigger: ";bigoplus"
+    word: true
     replace: "⨁"
   - trigger: ";bigodot"
+    word: true
     replace: "⨀"
   - trigger: ";biguplus"
+    word: true
     replace: "⨄"
   - trigger: ";bigsqcap"
+    word: true
     replace: "⨅"
   - trigger: ";bigsqcup"
+    word: true
     replace: "⨆"
 
   # ------------------------------------------------------------------
   # Relations
   # ------------------------------------------------------------------
   - trigger: ";leq"
+    word: true
     replace: "≤"
   - trigger: ";geq"
+    word: true
     replace: "≥"
   - trigger: ";leqslant"
+    word: true
     replace: "⩽"
   - trigger: ";geqslant"
+    word: true
     replace: "⩾"
   - trigger: ";neq"
+    word: true
     replace: "≠"
   - trigger: ";sim"
+    word: true
     replace: "∼"
   - trigger: ";simeq"
+    word: true
     replace: "≃"
   - trigger: ";cong"
+    word: true
     replace: "≅"
   - trigger: ";approx"
+    word: true
     replace: "≈"
   - trigger: ";equiv"
+    word: true
     replace: "≡"
   - trigger: ";propto"
+    word: true
     replace: "∝"
   - trigger: ";prec"
+    word: true
     replace: "≺"
   - trigger: ";succ"
+    word: true
     replace: "≻"
   - trigger: ";preceq"
+    word: true
     replace: "⪯"
   - trigger: ";succeq"
+    word: true
     replace: "⪰"
   - trigger: ";ll"
+    word: true
     replace: "≪"
   - trigger: ";gg"
+    word: true
     replace: "≫"
   - trigger: ";subset"
+    word: true
     replace: "⊂"
   - trigger: ";supset"
+    word: true
     replace: "⊃"
   - trigger: ";subseteq"
+    word: true
     replace: "⊆"
   - trigger: ";supseteq"
+    word: true
     replace: "⊇"
   - trigger: ";sqsubseteq"
+    word: true
     replace: "⊑"
   - trigger: ";sqsupseteq"
+    word: true
     replace: "⊒"
   - trigger: ";in"
+    word: true
     replace: "∈"
   - trigger: ";notin"
+    word: true
     replace: "∉"
   - trigger: ";ni"
+    word: true
     replace: "∋"
   - trigger: ";perp"
+    word: true
     replace: "⊥"
   - trigger: ";B"
+    word: true
     replace: "⊥"
   - trigger: ";T"
+    word: true
     replace: "⊤"
   - trigger: ";parallel"
+    word: true
     replace: "∥"
   - trigger: ";mid"
+    word: true
     replace: "∣"
   - trigger: ";nmid"
+    word: true
     replace: "∤"
   - trigger: ";asymp"
+    word: true
     replace: "≍"
   - trigger: ";bowtie"
+    word: true
     replace: "⋈"
   - trigger: ";models"
+    word: true
     replace: "⊧"
   - trigger: ";vdash"
+    word: true
     replace: "⊢"
   - trigger: ";dashv"
+    word: true
     replace: "⊣"
   - trigger: ";llbracket"
+    word: true
     replace: "⟦"
   - trigger: ";rrbracket"
+    word: true
     replace: "⟧"
 
   # ------------------------------------------------------------------
   # Arrows
   # ------------------------------------------------------------------
   - trigger: ";rightarrow"
+    word: true
     replace: "→"
   - trigger: ";leftarrow"
+    word: true
     replace: "←"
   - trigger: ";leftrightarrow"
+    word: true
     replace: "↔"
   - trigger: ";Rightarrow"
+    word: true
     replace: "⇒"
   - trigger: ";Leftarrow"
+    word: true
     replace: "⇐"
   - trigger: ";Leftrightarrow"
+    word: true
     replace: "⇔"
   - trigger: ";to"
+    word: true
     replace: "→"
   - trigger: ";gets"
+    word: true
     replace: "←"
   - trigger: ";mapsto"
+    word: true
     replace: "↦"
   - trigger: ";mapsfrom"
+    word: true
     replace: "↤"
   - trigger: ";uparrow"
+    word: true
     replace: "↑"
   - trigger: ";downarrow"
+    word: true
     replace: "↓"
   - trigger: ";updownarrow"
+    word: true
     replace: "↕"
   - trigger: ";Uparrow"
+    word: true
     replace: "⇑"
   - trigger: ";Downarrow"
+    word: true
     replace: "⇓"
   - trigger: ";Updownarrow"
+    word: true
     replace: "⇕"
   - trigger: ";nearrow"
+    word: true
     replace: "↗"
   - trigger: ";searrow"
+    word: true
     replace: "↘"
   - trigger: ";nwarrow"
+    word: true
     replace: "↖"
   - trigger: ";swarrow"
+    word: true
     replace: "↙"
   - trigger: ";rightharpoonup"
+    word: true
     replace: "⇀"
   - trigger: ";rightharpoondown"
+    word: true
     replace: "⇁"
   - trigger: ";leftharpoonup"
+    word: true
     replace: "↼"
   - trigger: ";leftharpoondown"
+    word: true
     replace: "↽"
   - trigger: ";hookrightarrow"
+    word: true
     replace: "↪"
   - trigger: ";hookleftarrow"
+    word: true
     replace: "↩"
   - trigger: ";leadsto"
+    word: true
     replace: "⇝"
 
   # ------------------------------------------------------------------
   # Misc symbols
   # ------------------------------------------------------------------
   - trigger: ";infty"
+    word: true
     replace: "∞"
   - trigger: ";partial"
+    word: true
     replace: "∂"
   - trigger: ";nabla"
+    word: true
     replace: "∇"
   - trigger: ";forall"
+    word: true
     replace: "∀"
   - trigger: ";exists"
+    word: true
     replace: "∃"
   - trigger: ";nexists"
+    word: true
     replace: "∄"
   - trigger: ";neg"
+    word: true
     replace: "¬"
   - trigger: ";lnot"
+    word: true
     replace: "¬"
   - trigger: ";emptyset"
+    word: true
     replace: "∅"
   - trigger: ";varnothing"
+    word: true
     replace: "∅"
   - trigger: ";angle"
+    word: true
     replace: "∠"
   - trigger: ";measuredangle"
+    word: true
     replace: "∡"
   - trigger: ";degree"
+    word: true
     replace: "°"
   - trigger: ";prime"
+    word: true
     replace: "′"
   - trigger: ";dprime"
+    word: true
     replace: "″"
   - trigger: ";dagger"
+    word: true
     replace: "†"
   - trigger: ";ddagger"
+    word: true
     replace: "‡"
   - trigger: ";dots"
+    word: true
     replace: "…"
   - trigger: ";ldots"
+    word: true
     replace: "…"
   - trigger: ";vdots"
+    word: true
     replace: "⋮"
   - trigger: ";ddots"
+    word: true
     replace: "⋱"
   - trigger: ";hbar"
+    word: true
     replace: "ℏ"
   - trigger: ";hslash"
+    word: true
     replace: "ℏ"
   - trigger: ";imath"
+    word: true
     replace: "ı"
   - trigger: ";jmath"
+    word: true
     replace: "ȷ"
   - trigger: ";Re"
+    word: true
     replace: "ℜ"
   - trigger: ";Im"
+    word: true
     replace: "ℑ"
   - trigger: ";aleph"
+    word: true
     replace: "ℵ"
   - trigger: ";beth"
+    word: true
     replace: "ℶ"
   - trigger: ";complement"
+    word: true
     replace: "∁"
   - trigger: ";sum"
+    word: true
     replace: "∑"
   - trigger: ";prod"
+    word: true
     replace: "∏"
   - trigger: ";coprod"
+    word: true
     replace: "∐"
   - trigger: ";int"
+    word: true
     replace: "∫"
   - trigger: ";iint"
+    word: true
     replace: "∬"
   - trigger: ";iiint"
+    word: true
     replace: "∭"
   - trigger: ";oint"
+    word: true
     replace: "∮"
   - trigger: ";sqrt"
+    word: true
     replace: "√"
   - trigger: ";cuberoot"
+    word: true
     replace: "∛"
   - trigger: ";fourthroot"
+    word: true
     replace: "∜"
   - trigger: ";triangle"
+    word: true
     replace: "△"
   - trigger: ";square"
+    word: true
     replace: "□"
   - trigger: ";lozenge"
+    word: true
     replace: "◊"
   - trigger: ";checkmark"
+    word: true
     replace: "✓"
   - trigger: ";ballotx"
+    word: true
     replace: "✗"
   - trigger: ";natural"
+    word: true
     replace: "♮"
   - trigger: ";flat"
+    word: true
     replace: "♭"
   - trigger: ";sharp"
+    word: true
     replace: "♯"
 
   # ------------------------------------------------------------------
@@ -444,12 +653,16 @@ matches:
   # Definition / assignment operators
   # ------------------------------------------------------------------
   - trigger: ";:="
+    word: true
     replace: "≔"
   - trigger: ";=:"
+    word: true
     replace: "≕"
   - trigger: ";coloneq"
+    word: true
     replace: "≔"
   - trigger: ";eqcolon"
+    word: true
     replace: "≕"
 
   # ------------------------------------------------------------------
@@ -457,108 +670,160 @@ matches:
   # (glyphs from Letterlike Symbols + Math Alphanumeric block)
   # ------------------------------------------------------------------
   - trigger: ";mcA"
+    word: true
     replace: "𝒜"
   - trigger: ";mcB"
+    word: true
     replace: "ℬ"
   - trigger: ";mcC"
+    word: true
     replace: "𝒞"
   - trigger: ";mcD"
+    word: true
     replace: "𝒟"
   - trigger: ";mcE"
+    word: true
     replace: "ℰ"
   - trigger: ";mcF"
+    word: true
     replace: "ℱ"
   - trigger: ";mcG"
+    word: true
     replace: "𝒢"
   - trigger: ";mcH"
+    word: true
     replace: "ℋ"
   - trigger: ";mcI"
+    word: true
     replace: "ℐ"
   - trigger: ";mcJ"
+    word: true
     replace: "𝒥"
   - trigger: ";mcK"
+    word: true
     replace: "𝒦"
   - trigger: ";mcL"
+    word: true
     replace: "ℒ"
   - trigger: ";mcM"
+    word: true
     replace: "ℳ"
   - trigger: ";mcN"
+    word: true
     replace: "𝒩"
   - trigger: ";mcO"
+    word: true
     replace: "𝒪"
   - trigger: ";mcP"
+    word: true
     replace: "𝒫"
   - trigger: ";mcQ"
+    word: true
     replace: "𝒬"
   - trigger: ";mcR"
+    word: true
     replace: "ℝ"
   - trigger: ";mcS"
+    word: true
     replace: "𝒮"
   - trigger: ";mcT"
+    word: true
     replace: "𝒯"
   - trigger: ";mcU"
+    word: true
     replace: "𝒰"
   - trigger: ";mcV"
+    word: true
     replace: "𝒱"
   - trigger: ";mcW"
+    word: true
     replace: "𝒲"
   - trigger: ";mcX"
+    word: true
     replace: "𝒳"
   - trigger: ";mcY"
+    word: true
     replace: "𝒴"
   - trigger: ";mcZ"
+    word: true
     replace: "𝒵"
   - trigger: ";mca"
+    word: true
     replace: "𝒶"
   - trigger: ";mcb"
+    word: true
     replace: "𝒷"
   - trigger: ";mcc"
+    word: true
     replace: "𝒸"
   - trigger: ";mcd"
+    word: true
     replace: "𝒹"
   - trigger: ";mce"
+    word: true
     replace: "ℯ"
   - trigger: ";mcf"
+    word: true
     replace: "𝒻"
   - trigger: ";mcg"
+    word: true
     replace: "ℊ"
   - trigger: ";mch"
+    word: true
     replace: "𝒽"
   - trigger: ";mci"
+    word: true
     replace: "𝒾"
   - trigger: ";mcj"
+    word: true
     replace: "𝒿"
   - trigger: ";mck"
+    word: true
     replace: "𝓀"
   - trigger: ";mcl"
+    word: true
     replace: "𝓁"
   - trigger: ";mcm"
+    word: true
     replace: "𝓂"
   - trigger: ";mcn"
+    word: true
     replace: "𝓃"
   - trigger: ";mco"
+    word: true
     replace: "ℴ"
   - trigger: ";mcp"
+    word: true
     replace: "𝓅"
   - trigger: ";mcq"
+    word: true
     replace: "𝓆"
   - trigger: ";mcr"
+    word: true
     replace: "𝓇"
   - trigger: ";mcs"
+    word: true
     replace: "𝓈"
   - trigger: ";mct"
+    word: true
     replace: "𝓉"
   - trigger: ";mcu"
+    word: true
     replace: "𝓊"
   - trigger: ";mcv"
+    word: true
     replace: "𝓋"
   - trigger: ";mcw"
+    word: true
     replace: "𝓌"
   - trigger: ";mcx"
+    word: true
     replace: "𝓍"
   - trigger: ";mcy"
+    word: true
     replace: "𝓎"
   - trigger: ";mcz"
+    word: true
     replace: "𝓏"
 
   # Subscripts  (type the base, then ;_x  e.g.  l;_x  ->  lₓ )
