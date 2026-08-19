@@ -276,6 +276,10 @@ matches:
     replace: "⊢"
   - trigger: ";dashv"
     replace: "⊣"
+  - trigger: ";llbracket"
+    replace: "⟦"
+  - trigger: ";rrbracket"
+    replace: "⟧"
 
   # ------------------------------------------------------------------
   # Arrows
