@@ -31,7 +31,10 @@ bzw. `--image DATEI` können stattdessen gezielt einzelne Dateien gewählt
 werden; `--inbox PFAD` ändert den Suchordner. Bankkonten werden anhand von
 Bank und Währung aus `~/Ledger/main_2025.ledger` vorgeschlagen und bei
 eindeutigem Treffer automatisch eingesetzt. Mehrdeutige Zuordnungen werden
-einmal abgefragt und ausschließlich lokal in `account-map.json` gemerkt.
+für die jeweilige Quelle abgefragt und ausschließlich lokal in
+`account-map.json` gemerkt. Bei Tatra wird dabei die Kontokennung im
+Dateinamen berücksichtigt; verschiedene Tatra-Konten teilen sich keine
+Zuordnung. Prüfe `bank_account` trotzdem im Entwurf.
 Mit `--ledger PFAD` lässt sich dafür ein anderes Journal wählen. `cleanup`
 löscht nur die im erfolgreich übernommenen Entwurf genannten Eingangsdateien,
 den Entwurf und dessen Übernahmevermerk; die lokale Kontozuordnung bleibt für

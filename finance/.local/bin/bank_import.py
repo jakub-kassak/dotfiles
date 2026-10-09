@@ -97,6 +97,16 @@ class AccountResolver:
             return "wise"
         return source
 
+    @staticmethod
+    def source_identity(source, bank):
+        if bank == "tatra":
+            # The trailing date changes between statements; the preceding
+            # identifier distinguishes different Tatra accounts.
+            match = re.fullmatch(r"tatra-(.+)_\d{4}-\d{2}-\d{2}\.pdf", source.lower())
+            if match:
+                source = match.group(1)
+        return hashlib.sha256(source.lower().encode("utf-8")).hexdigest()[:16]
+
     def _save(self):
         self.mapping_file.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         fd, temporary = tempfile.mkstemp(prefix=".account-map-", dir=self.mapping_file.parent)
@@ -113,14 +123,6 @@ class AccountResolver:
     def __call__(self, source, currency):
         bank = self.bank_name(source)
         currency = currency.upper()
-        key = f"{bank}|{currency}"
-        saved = self.mapping.get(key)
-        if isinstance(saved, str) and (not self.accounts or saved in self.accounts):
-            if key not in self._announced:
-                print(f"Bankkonto (lokal gemerkt): {saved}")
-                self._announced.add(key)
-            return saved
-
         candidates = sorted(name for name in self.accounts
                             if bank.casefold() in name.casefold() and
                             name.split(":", 1)[0].casefold() in ("assets", "liabilities"))
@@ -131,6 +133,17 @@ class AccountResolver:
         candidates = [name for name in candidates if not currency_tokens(name) or currency in currency_tokens(name)]
         exact_currency = [name for name in candidates if currency in currency_tokens(name)]
         options = exact_currency if exact_currency else candidates
+        # A unique bank account is safe to reuse; ambiguous accounts are
+        # remembered only for this source account/statement identifier.
+        key = f"{bank}|{currency}"
+        if len(options) != 1:
+            key += "|" + self.source_identity(source, bank)
+        saved = self.mapping.get(key)
+        if isinstance(saved, str) and (not self.accounts or saved in self.accounts):
+            if key not in self._announced:
+                print(f"Bankkonto (lokal gemerkt): {saved}")
+                self._announced.add(key)
+            return saved
         if len(options) == 1:
             selected = options[0]
             print(f"Bankkonto eindeutig zugeordnet: {selected}")
