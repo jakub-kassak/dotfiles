@@ -79,10 +79,14 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git                         # Git shortcuts and features
+    fzf                         # ctrl+r history, ctrl+t files, alt+c dirs
     zsh-autosuggestions        # Fish-like autosuggestions
     zsh-syntax-highlighting    # Fish-like syntax highlighting
-    autojump                   # Smart directory jumping
 )
+command -v autojump &>/dev/null && plugins+=(autojump)
+
+mkdir -p "$HOME/.zsh_history_dir"
+export HISTFILE="$HOME/.zsh_history_dir/.zsh_history"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -94,11 +98,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"
@@ -120,6 +124,7 @@ source $ZSH/oh-my-zsh.sh
 
 # If we are in the DevContainer, override the Powerlevel10k prompt symbol to '$'
 if [[ -d "/workspaces/AgentDojo" ]] || [[ -n "$CLAUDE_CODE_USE_VERTEX" ]]; then
+  export TERM=xterm-256color
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='$'
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VICMD_CONTENT_EXPANSION='$'
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIVIS_CONTENT_EXPANSION='$'
@@ -140,12 +145,15 @@ fi
 
 
 ### 1Password
-eval "$(op completion zsh)"; compdef _op op
+command -v op &>/dev/null && eval "$(op completion zsh)" && compdef _op op
 
 #################
 ### Aliases
 #################
-alias lg='lazygit'
+alias lg='DFT_BACKGROUND=light lazygit'
+alias lgd='DFT_BACKGROUND=dark lazygit'
+alias codex='CODEX_HOME="$HOME/.codex-alt" command codex'
+alias codex-tac='CODEX_HOME="$HOME/.codex" command codex'
 function gemini-docker {
     local tty_args=""
     if [ -t 0 ]; then
@@ -172,10 +180,10 @@ if [ -f "$HOME/.zsh_secrets" ]; then
 fi
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
-# claude code
-export CLAUDE_CODE_USE_VERTEX=1
-export ANTHROPIC_VERTEX_PROJECT_ID=aipril-455019
-export ANTHROPIC_VERTEX_LOCATION="global"
+# # claude code
+# export CLAUDE_CODE_USE_VERTEX=1
+# export ANTHROPIC_VERTEX_PROJECT_ID=aipril-455019
+# export ANTHROPIC_VERTEX_LOCATION="global"
 
 export PATH="$HOME/.cabal/bin:$HOME/.ghcup/bin:$PATH"
 
@@ -187,7 +195,11 @@ function auto_activate_venv() {
     if [[ -n "$VIRTUAL_ENV" ]]; then
         parentdir="$(dirname "$VIRTUAL_ENV")"
         if [[ "$PWD"/ != "$parentdir"/* && "$PWD" != "$parentdir" ]]; then
-            deactivate
+            if whence deactivate >/dev/null; then
+                deactivate
+            else
+                unset VIRTUAL_ENV
+            fi
         fi
     fi
 
@@ -218,13 +230,18 @@ if [ -f "/workspaces/AgentDojo/tools/vd_pipeline.sh" ]; then
 fi
 
 
-# Automatically load .env file if it exists in the workspace
-local env_file="/workspaces/AgentDojo/.env"
-if [ -f "$env_file" ]; then
-    set -a
-    source "$env_file"
-    set +a
-fi
+# Automatically export variables from a trusted project's .env on shell start
+# and whenever the working directory changes, so child processes inherit them.
+function load_dotenv() {
+    if [[ -f "$PWD/.env" ]]; then
+        set -a
+        source "$PWD/.env"
+        set +a
+    fi
+}
+
+add-zsh-hook chpwd load_dotenv
+load_dotenv
 
 # --- Cross-Environment Clipboard (macOS & Dev Container) ---
 # Kopiert den Input in die System-Zwischenablage.
@@ -240,3 +257,31 @@ cb() {
   fi
 }
 alias clip="cb"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/jakubkassak/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+export PATH="/home/dev/.local/bin:$PATH"
+export PATH="/Users/jakubkassak/.local/bin:$PATH"
+
+# ZSCALER CERTIFICATE CONFIGURATION START
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export CA_BUNDLE_PATH="/Users/jakubkassak/zscaler-ca-bundle.pem"
+    [ ! -f "$CA_BUNDLE_PATH" ] && export CA_BUNDLE_PATH="$HOME/.ssl/corporate_certs.pem"
+    export REQUESTS_CA_BUNDLE="$CA_BUNDLE_PATH"
+    export NODE_EXTRA_CA_CERTS="$CA_BUNDLE_PATH"
+    export HOMEBREW_SSL_CERT_FILE="$CA_BUNDLE_PATH"
+    export CURL_CA_BUNDLE="$CA_BUNDLE_PATH"
+    export SSL_CERT_FILE="$CA_BUNDLE_PATH"
+    export CACERTS_PATH="$CA_BUNDLE_PATH"
+else
+    # Linux / Dev Container
+    export CA_BUNDLE_PATH="/etc/ssl/certs/ca-certificates.crt"
+    export REQUESTS_CA_BUNDLE="$CA_BUNDLE_PATH"
+    export NODE_EXTRA_CA_CERTS="$CA_BUNDLE_PATH"
+    export CURL_CA_BUNDLE="$CA_BUNDLE_PATH"
+    export SSL_CERT_FILE="$CA_BUNDLE_PATH"
+    export CACERTS_PATH="$CA_BUNDLE_PATH"
+fi
+# ZSCALER CERTIFICATE CONFIGURATION END

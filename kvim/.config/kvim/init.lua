@@ -393,7 +393,8 @@ do
     spec = {
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]oggle' },
-      { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
+      { '<leader>h', group = '[H]arpoon|[H]ls', mode = { 'n', 'v' } },
+      { '<leader>v', group = 'Database [V]iews', mode = { 'n' } },
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
     },
   }
@@ -404,20 +405,15 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'folke/tokyonight.nvim' }
-  ---@diagnostic disable-next-line: missing-fields
-  require('tokyonight').setup {
-    styles = {
-      comments = { italic = false }, -- Disable italics in comments
+  vim.pack.add { gh 'maxmx03/solarized.nvim' }
+  require('solarized').setup {
+    transparent = {
+      enabled = false,
     },
   }
 
   -- Load the colorscheme here.
-  -- Like many other themes, this one has different styles, and you could load
-  -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
--- Solarized Theme to match Wezterm
-  vim.pack.add { gh 'folke/tokyonight.nvim' }
-vim.cmd.colorscheme 'tokyonight-moon'
+  vim.cmd.colorscheme 'solarized'
 
   -- Fix Telescope prompt visibility in NeoSolarized
 
@@ -511,6 +507,52 @@ vim.cmd.colorscheme 'tokyonight-moon'
 -- Markdown rendering
   vim.pack.add { gh 'MeanderingProgrammer/render-markdown.nvim' }
   vim.schedule(function() pcall(function() require('render-markdown').setup() end) end)
+
+  -- [[ Database Client (vim-dadbod) ]]
+  vim.pack.add {
+    gh 'tpope/vim-dadbod',
+    gh 'kristijanhusak/vim-dadbod-completion',
+    gh 'kristijanhusak/vim-dadbod-ui',
+  }
+
+  -- Helper to read .env file
+  local function load_env(file_path)
+    local env = {}
+    local f = io.open(file_path, "r")
+    if not f then return env end
+    for line in f:lines() do
+      if not line:match("^%s*#") and line:match("=") then
+        local key, val = line:match("^%s*([%w_]+)%s*=%s*(.*)%s*$")
+        if key and val then
+          env[key] = val:gsub("^['\"](.-)['\"]$", "%1")
+        end
+      end
+    end
+    f:close()
+    return env
+  end
+
+  local db_env = load_env(vim.fn.getcwd() .. '/.env')
+  if not db_env.DB_NAME then -- Fallback if not started from workspace root
+    db_env = load_env('/workspaces/AgentDojo/.env')
+  end
+
+  _G.DADBOD_ENV = {
+    host = db_env.DB_HOST or 'localhost',
+    port = db_env.DB_PORT or '5432',
+    user = db_env.DB_USER or 'postgres',
+    pass = db_env.DB_PASSWORD or '',
+    name = db_env.DB_NAME or 'postgres'
+  }
+  _G.DADBOD_URL = string.format('postgresql://%s:%s@%s:%s/%s', _G.DADBOD_ENV.user, _G.DADBOD_ENV.pass, _G.DADBOD_ENV.host, _G.DADBOD_ENV.port, _G.DADBOD_ENV.name)
+
+  -- Set up database connections for vim-dadbod-ui
+  vim.g.dbs = {
+    { name = _G.DADBOD_ENV.name, url = _G.DADBOD_URL }
+  }
+
+  -- Configure DBUI options
+  vim.g.db_ui_use_nerd_fonts = vim.g.have_nerd_font and 1 or 0
 
   -- [[ mini.nvim ]]
   --  A collection of various small independent plugins/modules
@@ -633,6 +675,11 @@ pcall(require('telescope').load_extension, 'ui-select')
   vim.keymap.set('n', '<leader>h2', function() ui.nav_file(2) end, { desc = 'Harpoon: File 2' })
   vim.keymap.set('n', '<leader>h3', function() ui.nav_file(3) end, { desc = 'Harpoon: File 3' })
   vim.keymap.set('n', '<leader>h4', function() ui.nav_file(4) end, { desc = 'Harpoon: File 4' })
+  vim.keymap.set('n', '<leader>h5', function() ui.nav_file(5) end, { desc = 'Harpoon: File 5' })
+  vim.keymap.set('n', '<leader>h6', function() ui.nav_file(6) end, { desc = 'Harpoon: File 6' })
+  vim.keymap.set('n', '<leader>h7', function() ui.nav_file(7) end, { desc = 'Harpoon: File 7' })
+  vim.keymap.set('n', '<leader>h8', function() ui.nav_file(8) end, { desc = 'Harpoon: File 8' })
+  vim.keymap.set('n', '<leader>h9', function() ui.nav_file(9) end, { desc = 'Harpoon: File 9' })
 
 
 
@@ -1043,6 +1090,14 @@ do
 
     sources = {
       default = { 'lsp', 'path', 'snippets' },
+      per_filetype = {
+        sql = { 'dadbod', 'buffer' },
+        mysql = { 'dadbod', 'buffer' },
+        plsql = { 'dadbod', 'buffer' },
+      },
+      providers = {
+        dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
+      },
     },
 
     snippets = { preset = 'luasnip' },
@@ -1059,6 +1114,17 @@ do
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
   }
+
+  -- Safe fallback/compatibility for nvim-cmp if it is ever loaded
+  local has_cmp, cmp = pcall(require, 'cmp')
+  if has_cmp then
+    cmp.setup.filetype({ "sql" }, {
+      sources = {
+        { name = "vim-dadbod-completion" },
+        { name = "buffer" },
+      }
+    })
+  end
 end
 
 -- ============================================================
@@ -1137,7 +1203,7 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.debug'
   -- require 'kickstart.plugins.indent_line'
   -- require 'kickstart.plugins.lint'
   -- require 'kickstart.plugins.autopairs'
@@ -1147,7 +1213,7 @@ do
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- require 'custom.plugins'
+  require 'custom.plugins'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
@@ -1160,8 +1226,221 @@ vim.api.nvim_create_user_command('OpenCodeToggle', function()
 end, {})
 
 
--- Quick quit
-vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit all' })
+-- Describe table/view with autocomplete support
+-- Disable automatic folding in Dadbod output buffers
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "dbout",
+  callback = function()
+    vim.opt_local.foldenable = false
+  end,
+})
+
+local function get_db_tables()
+  local cmd = string.format("PGPASSWORD='%s' psql -h '%s' -p '%s' -U '%s' -d '%s' -t -A -c \"SELECT tablename FROM pg_tables WHERE schemaname = 'public' UNION SELECT viewname FROM pg_views WHERE schemaname = 'public' UNION SELECT matviewname FROM pg_matviews WHERE schemaname = 'public'\"",
+    _G.DADBOD_ENV.pass, _G.DADBOD_ENV.host, _G.DADBOD_ENV.port, _G.DADBOD_ENV.user, _G.DADBOD_ENV.name)
+  local handle = io.popen(cmd)
+  if not handle then return {} end
+  local result = handle:read("*a")
+  handle:close()
+  
+  local tables = {}
+  for line in result:gmatch("[^\r\n]+") do
+    table.insert(tables, line)
+  end
+  return tables
+end
+
+vim.api.nvim_create_user_command('DBDescribe', function(opts)
+  local table_name = opts.args
+  if table_name == '' then
+    vim.notify('Bitte gib einen Tabellennamen an.', vim.log.levels.WARN)
+    return
+  end
+  local url = _G.DADBOD_URL
+  if not url then
+    vim.notify('Fehler: _G.DADBOD_URL ist nicht definiert! Bitte Neovim neustarten.', vim.log.levels.ERROR)
+    return
+  end
+  
+  vim.notify("Öffne Schema für: " .. table_name, vim.log.levels.INFO)
+  vim.cmd(string.format('botright vertical DB %s \\d %s', url, table_name))
+  -- Fokus in das neu geöffnete Preview-Fenster (Dadbod Output) setzen
+  vim.cmd('wincmd P')
+  vim.cmd('vertical resize 50')
+  -- Entferne das 'preview'-Flag, damit normale Queries ein NEUES Fenster öffnen!
+  vim.cmd('setlocal nopreviewwindow')
+end, {
+  nargs = 1,
+  complete = function(ArgLead, CmdLine, CursorPos)
+    local tables = get_db_tables()
+    local matches = {}
+    for _, name in ipairs(tables) do
+      if name:lower():sub(1, #ArgLead:lower()) == ArgLead:lower() then
+        table.insert(matches, name)
+      end
+    end
+    return matches
+  end
+})
+
+-- Keymap to trigger DBDescribe with autocompletion
+vim.keymap.set('n', '<leader>vd', ':DBDescribe ', { desc = 'DB: Describe table/view with completion' })
+
+
+-- Run the SQL query in the current buffer (or visual selection) through psql
+-- and browse the CSV result with VisiData, in a Zellij floating pane.
+-- Falls back to a Neovim split terminal when not running inside Zellij.
+-- Refs: https://zellij.dev/documentation/zellij-run-and-edit.html
+local VISIDATA_BIN = '/workspaces/AgentDojo/.venv/bin/vd'
+
+local function zellij_current_session()
+  -- $ZELLIJ_SESSION_NAME can be stale (session renamed/cycled).  When
+  -- multiple sessions are running we can't just pick the first one from
+  -- `list-sessions`.  Instead we use nvim's own $ZELLIJ_PANE_ID (which stays
+  -- valid for the lifetime of the pane) and find which session contains that
+  -- pane via `zellij action list-panes`.
+  local pane_id = vim.env.ZELLIJ_PANE_ID
+  local handle = io.popen('zellij list-sessions -s 2>/dev/null')
+  if not handle then return nil end
+  local out = handle:read('*a')
+  handle:close()
+
+  local sessions = {}
+  for name in out:gmatch('%S+') do
+    table.insert(sessions, name)
+  end
+  if #sessions == 0 then return nil end
+  if #sessions == 1 then return sessions[1] end
+
+  -- Multiple sessions: find the one whose pane list contains our pane id.
+  if pane_id and pane_id ~= '' then
+    for _, name in ipairs(sessions) do
+      local h = io.popen(string.format(
+        "timeout 3 zellij --session %s action list-panes -j 2>/dev/null",
+        vim.fn.shellescape(name)
+      ))
+      if h then
+        local layout = h:read('*a')
+        h:close()
+        -- Match {"id": <pane_id>, ...} — the id field appears early in each
+        -- pane object, so a simple substring check is reliable enough.
+        if layout and layout:match('"id":%s*' .. pane_id .. '%D') then
+          return name
+        end
+      end
+    end
+  end
+
+  -- Fallback: first session
+  return sessions[1]
+end
+
+local function dbvisidata_spawn(script_file)
+  if vim.env.ZELLIJ then
+    local session = zellij_current_session()
+    if not session then
+      vim.notify('Keine aktive Zellij-Session gefunden.', vim.log.levels.ERROR)
+      return
+    end
+    -- `--session` is required: $ZELLIJ_SESSION_NAME may be stale and without
+    -- it `zellij run` blocks forever waiting for a session to be chosen.
+    -- `--floating` + size gives VisiData a large, focused window; `--close-on-exit`
+    -- closes the pane when vd quits.
+    vim.system({
+      'zellij', '--session', session, 'run',
+      '-d', 'down',
+      '--close-on-exit',
+      '--name', 'VisiData',
+      '--', 'bash', script_file,
+    }, { detach = true })
+  else
+    vim.cmd('botright 20split | terminal bash ' .. vim.fn.shellescape(script_file))
+  end
+end
+
+vim.api.nvim_create_user_command('DBVisiData', function(opts)
+  local env = _G.DADBOD_ENV
+  if not env or not env.host then
+    vim.notify('DADBOD_ENV nicht initialisiert — Neovim neustarten.', vim.log.levels.ERROR)
+    return
+  end
+
+  -- Whole buffer unless a range was given (visual mode auto-prepends '<,'>)
+  local line1, line2 = opts.line1, opts.line2
+  if opts.range == 0 then
+    line1, line2 = 1, vim.api.nvim_buf_line_count(0)
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, false)
+  local query = table.concat(lines, '\n')
+  if query:match('^%s*$') then
+    vim.notify('Keine Query gefunden!', vim.log.levels.WARN)
+    return
+  end
+
+  -- Write the query to a temp file — sidesteps every shell-quoting problem.
+  local query_file = os.tmpname() .. '.sql'
+  local f = io.open(query_file, 'w')
+  if not f then
+    vim.notify('Konnte Query-Datei nicht schreiben.', vim.log.levels.ERROR)
+    return
+  end
+  f:write(query)
+  f:close()
+
+  -- Build a self-contained runner. Cleanup runs via an EXIT trap (so the
+  -- script never deletes itself mid-execution) and every interpolated value
+  -- is shell-escaped with vim.fn.shellescape.
+  local script_file = os.tmpname() .. '_run.sh'
+  local sf = io.open(script_file, 'w')
+  if not sf then
+    os.remove(query_file)
+    vim.notify('Konnte Skript-Datei nicht schreiben.', vim.log.levels.ERROR)
+    return
+  end
+
+  local psql = string.format(
+    'PGPASSWORD=%s psql -h %s -p %s -U %s -d %s --csv -f %s',
+    vim.fn.shellescape(env.pass),
+    vim.fn.shellescape(env.host),
+    vim.fn.shellescape(tostring(env.port)),
+    vim.fn.shellescape(env.user),
+    vim.fn.shellescape(env.name),
+    vim.fn.shellescape(query_file)
+  )
+
+  sf:write('#!/bin/bash\n')
+  sf:write('set -uo pipefail\n')
+  sf:write('QUERY_FILE=' .. vim.fn.shellescape(query_file) .. '\n')
+  sf:write('SCRIPT_FILE=' .. vim.fn.shellescape(script_file) .. '\n')
+  sf:write('CSV_OUT=$(mktemp)\n')
+  sf:write('ERR_OUT=$(mktemp)\n')
+  sf:write('cleanup() { rm -f "$CSV_OUT" "$ERR_OUT" "$QUERY_FILE" "$SCRIPT_FILE"; }\n')
+  sf:write('trap cleanup EXIT\n')
+  sf:write(psql .. ' > "$CSV_OUT" 2> "$ERR_OUT"\n')
+  sf:write('RC=$?\n')
+  sf:write('if [ "$RC" -ne 0 ]; then\n')
+  sf:write('  cat "$ERR_OUT"\n')
+  sf:write("  echo ''\n")
+  sf:write("  read -r -p 'Fehler in der Query. Enter zum Schließen...'\n")
+  sf:write('  exit "$RC"\n')
+  sf:write('fi\n')
+  sf:write(string.format('TERM=xterm-256color %s -f csv "$CSV_OUT"\n', VISIDATA_BIN))
+  sf:close()
+  os.execute('chmod +x ' .. vim.fn.shellescape(script_file))
+
+  vim.notify('Starte VisiData…', vim.log.levels.INFO)
+  dbvisidata_spawn(script_file)
+end, { range = true })
+
+vim.keymap.set({ 'n', 'v' }, '<leader>vv', '<cmd>DBVisiData<CR>', { desc = 'DB: Run query in VisiData' })
+
+
+-- Quick quit — close neo-tree first to prevent E95 on session restore
+vim.keymap.set('n', '<leader>qq', function()
+  pcall(function() require('neo-tree.sources.manager').close_all() end)
+  vim.cmd('qa')
+end, { desc = 'Quit all' })
 
 
 -- Direct Surround keymaps in visual mode (using mini.surround)
@@ -1174,3 +1453,6 @@ map("x", "{", "sa}", { remap = true, desc = "Surround with {}" })
 map("x", "}", "sa{", { remap = true, desc = "Surround with { }" })
 map("x", '"', 'sa"', { remap = true, desc = "Surround with double quotes" })
 map("x", "'", "sa'", { remap = true, desc = "Surround with single quotes" })
+
+-- Override vim.ui.open so `gx` on a `file://…#L142` link jumps to the line
+require 'custom.file_link'

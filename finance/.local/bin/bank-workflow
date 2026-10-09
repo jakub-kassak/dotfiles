@@ -1,0 +1,8 @@
+#!/bin/sh
+# Prefer the isolated Python with pypdf; allow an already configured python3.
+PATH="/opt/homebrew/bin:$PATH"
+export PATH
+if [ -x "$HOME/.local/share/bank-workflow-venv/bin/python" ]; then
+  exec "$HOME/.local/share/bank-workflow-venv/bin/python" "$HOME/.local/bin/bank_workflow.py" "$@"
+fi
+exec python3 "$HOME/.local/bin/bank_workflow.py" "$@"

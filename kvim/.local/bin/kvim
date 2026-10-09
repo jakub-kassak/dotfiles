@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ -f "$HOME/.kvim_dark" ]; then
+if [ "$(defaults read -g AppleInterfaceStyle 2>/dev/null)" = "Dark" ]; then
   export KVIM_THEME="dark"
 else
   export KVIM_THEME="light"

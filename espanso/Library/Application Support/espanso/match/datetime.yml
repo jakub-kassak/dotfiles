@@ -1,0 +1,16 @@
+# Type a shortcut followed by a space. Dates and times use the local timezone.
+matches:
+  - trigger: ";today "
+    replace: "{{today}} "
+    vars:
+      - name: today
+        type: date
+        params:
+          format: "%Y-%m-%d"
+  - trigger: ";now "
+    replace: "{{now}} "
+    vars:
+      - name: now
+        type: date
+        params:
+          format: "%H:%M"

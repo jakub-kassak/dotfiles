@@ -1,1 +1,16 @@
 kubeconfig
+.DS_Store
+**/automatic_backups/
+**/*.bak
+**/*.bak2
+**/*.backup.*
+**/__pycache__/
+**/*.pyc
+**/plugins/*.wasm
+finance/**/*.csv
+finance/**/*.zip
+finance/**/*.pdf
+finance/**/*.journal
+finance/**/*.ledger
+finance/**/*.tsv
+zellij/config.kdl

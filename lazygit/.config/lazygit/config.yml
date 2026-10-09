@@ -1,0 +1,7 @@
+git:
+  autoFetch: false
+  diffRenderers:
+    - colorArg: always
+      command: difft --color=always
+      useConfig: false
+      type: extDiff
