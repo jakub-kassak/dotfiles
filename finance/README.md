@@ -40,6 +40,17 @@ löscht nur die im erfolgreich übernommenen Entwurf genannten Eingangsdateien,
 den Entwurf und dessen Übernahmevermerk; die lokale Kontozuordnung bleibt für
 spätere Importe erhalten. Vorher fragt es nochmals nach.
 
+Bekannte CSV-Spalten, Währungen und eindeutige Datumsformate (auch Wise-Exporte)
+werden ohne Rückfragen erkannt; bei unbekannten Formaten wird nachgefragt.
+`prepare` sucht zudem im lokalen Ledger nach Buchungen mit gleicher Beschreibung
+und Bank/Währung und trägt ein Gegenkonto ein, wenn die bisherigen Buchungen
+eindeutig übereinstimmen. Wiederkehrende Beschreibungen mit wechselnden Nummern
+werden nur bei mindestens zwei übereinstimmenden Vorbildern erkannt. Eindeutig
+bereits gebuchte Umsätze erhalten `skip`, eindeutige neue Zuordnungen `add`.
+Unbekannte Buchungen oder Betrags-/Datumsüberschneidungen bleiben mit `?`
+markiert: nur diese Zeilen müssen entschieden werden. Alle Vorschläge vor der
+Übernahme kurz im Entwurf kontrollieren; `check` prüft weiterhin Duplikate.
+
 `action` ist `add`, `skip` oder (bei geprüften Duplikatverdachtsfällen) `add!`.
 `amount` ist die Bewegung auf `bank_account`; `counter_account` ist die zweite
 Buchungsseite. Bei einer Umbuchung steht dort das andere Bankkonto; eine

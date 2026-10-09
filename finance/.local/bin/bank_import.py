@@ -50,6 +50,39 @@ def column(headers, name, optional=False):
         print("Bitte eine angezeigte Spaltennummer wählen.")
 
 
+def named_column(headers, aliases):
+    def normalize(value):
+        return re.sub(r"[\s_-]+", " ", value.strip().casefold())
+    normalized = [normalize(header) for header in headers]
+    for alias in aliases:
+        matches = [index for index, header in enumerate(normalized) if header == alias]
+        if len(matches) == 1:
+            return matches[0]
+    return None
+
+
+def csv_date_format(values, source, headers):
+    values = [value.strip() for value in values if value.strip()]
+    if not values:
+        return prompt("Datumsformat (Python strptime)", "%Y-%m-%d")
+    formats = ("%Y-%m-%d", "%Y/%m/%d", "%d.%m.%Y", "%m.%d.%Y",
+               "%d/%m/%Y", "%m/%d/%Y", "%d-%m-%Y", "%m-%d-%Y")
+    compatible = []
+    for fmt in formats:
+        try:
+            for value in values:
+                datetime.strptime(value, fmt)
+            compatible.append(fmt)
+        except ValueError:
+            pass
+    if len(compatible) == 1:
+        return compatible[0]
+    if set(compatible) == {"%d-%m-%Y", "%m-%d-%Y"} and (
+            "wise" in source.casefold() or named_column(headers, ("transferwise id",)) is not None):
+        return "%d-%m-%Y"
+    return prompt("Datumsformat (Python strptime)", compatible[0] if compatible else "%Y-%m-%d")
+
+
 def account(message):
     while True:
         value = prompt(message)
@@ -233,21 +266,44 @@ def read_bank_rows(path, account_resolver=None):
         print(f"\n{name} – Spalten:")
         for index, header in enumerate(headers, 1):
             print(f"  {index}: {header}")
-        date_col = column(headers, "Buchungsdatum")
-        desc_col = column(headers, "Beschreibung")
-        amount_col = column(headers, "signierter Betrag (+ Eingang, - Ausgang)", optional=True)
+        rows = list(reader)
+        date_col = named_column(headers, ("date", "booking date", "buchungsdatum", "datum"))
+        if date_col is None:
+            date_col = column(headers, "Buchungsdatum")
+        desc_col = named_column(headers, ("description", "beschreibung", "text", "details"))
+        if desc_col is None:
+            desc_col = column(headers, "Beschreibung")
+        amount_col = named_column(headers, ("amount", "betrag", "signed amount", "betrag (signiert)"))
         if amount_col is None:
-            debit_col = column(headers, "Ausgang/Belastung")
-            credit_col = column(headers, "Eingang/Gutschrift")
-        currency_col = column(headers, "Währung", optional=True)
-        id_col = column(headers, "eindeutige Transaktions-ID", optional=True)
+            amount_col = column(headers, "signierter Betrag (+ Eingang, - Ausgang)", optional=True)
+        if amount_col is None:
+            debit_col = named_column(headers, ("debit", "belastung", "ausgang"))
+            credit_col = named_column(headers, ("credit", "gutschrift", "eingang"))
+            if debit_col is None:
+                debit_col = column(headers, "Ausgang/Belastung")
+            if credit_col is None:
+                credit_col = column(headers, "Eingang/Gutschrift")
+        currency_col = named_column(headers, ("currency", "währung", "waehrung"))
+        if currency_col is None:
+            currency_col = column(headers, "Währung", optional=True)
+        id_col = named_column(headers, ("transferwise id", "transaction id", "transaction reference", "transaktions id"))
+        if id_col is None:
+            id_col = column(headers, "eindeutige Transaktions-ID", optional=True)
         bank = account("hledger-Bankkonto (exakter Name im Ledger)") if account_resolver is None else None
-        currency = prompt("Währung, falls CSV-Feld leer/fehlt (z.B. CHF)", "CHF").upper()
-        date_format = prompt("Datumsformat (Python strptime)", "%Y-%m-%d")
-        if not re.fullmatch(r"[A-Z]{3}", currency):
+        needs_currency = currency_col is None or any(
+            len(row) <= currency_col or not row[currency_col].strip()
+            for row in rows if any(cell.strip() for cell in row))
+        currency = (prompt("Währung, falls CSV-Feld leer/fehlt (z.B. CHF)", "CHF").upper()
+                    if needs_currency else "")
+        date_format = csv_date_format(
+            [row[date_col] for row in rows if len(row) > date_col][:30], name, headers)
+        if currency and not re.fullmatch(r"[A-Z]{3}", currency):
             raise ValueError("Bitte einen dreibuchstabigen Währungscode verwenden")
 
-        for line, row in enumerate(reader, 2):
+        print(f"Verwendete Spalten: Datum {date_col + 1}, Text {desc_col + 1}, "
+              f"Betrag {amount_col + 1 if amount_col is not None else 'Belastung/Gutschrift'}, "
+              f"Währung {currency_col + 1 if currency_col is not None else currency}; Datum {date_format}")
+        for line, row in enumerate(rows, 2):
             if not any(cell.strip() for cell in row):
                 continue
             try:

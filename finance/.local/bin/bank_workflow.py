@@ -21,6 +21,7 @@ from decimal import Decimal
 from pathlib import Path
 
 import bank_import
+import bank_suggest
 
 
 WORK_DIR = Path.home() / "Library/Application Support/BankWorkflow"
@@ -32,6 +33,7 @@ AMOUNT_PATTERN = re.compile(r"(?<!\w)[+-]?(?:\d{1,3}(?:[ '\u00a0.,]\d{3})+|\d+)(
 PDF_ROW = re.compile(r"^(\d{2}\.\d{2}\.\d{4})\s")
 PDF_VALUE_DATE = re.compile(r"\s+\d{2}\.\d{2}\.\d{4}\s*$")
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
+CURRENCY_CODES = {"EUR", "CHF", "USD", "GBP", "CZK", "PLN", "HUF", "JPY", "CAD", "AUD", "SEK", "NOK", "DKK"}
 
 
 def date_guess(text):
@@ -46,6 +48,11 @@ def date_guess(text):
             except ValueError:
                 pass
     return guesses
+
+
+def text_currency(text):
+    mentioned = set(re.findall(r"\b[A-Z]{3}\b", text.upper())) & CURRENCY_CODES
+    return next(iter(mentioned)) if len(mentioned) == 1 else None
 
 
 def text_line(lines, label, default=""):
@@ -83,7 +90,8 @@ def interactive_text_rows(text, source, kind, account_resolver=None):
         print(f"  {index}: {value}")
     if not amounts:
         print("  keine")
-    currency = bank_import.prompt("Währung (z.B. EUR/CHF)").upper()
+    currency = text_currency(text) or bank_import.prompt("Währung (z.B. EUR/CHF)").upper()
+    print(f"Währung: {currency}")
     if not re.fullmatch(r"[A-Z]{3}", currency):
         raise ValueError("Währung muss aus drei Buchstaben bestehen")
     bank = (account_resolver(source, currency) if account_resolver else
@@ -184,7 +192,8 @@ def raiffeisen_pdf_rows(path, account_resolver=None):
     if not entries:
         raise ValueError("Keine Raiffeisen-Umsätze gefunden; PDF-Layout ist möglicherweise anders")
     print(f"\n{path.name}: {len(entries)} Buchungen anhand Datum/Text/Belastung/Gutschrift extrahiert.")
-    currency = bank_import.prompt("Währung des PDF-Kontos (z.B. CHF)").upper()
+    currency = text_currency(result.stdout) or bank_import.prompt("Währung des PDF-Kontos (z.B. CHF)").upper()
+    print(f"Währung: {currency}")
     if not re.fullmatch(r"[A-Z]{3}", currency):
         raise ValueError("Währung muss drei Großbuchstaben haben")
     bank = (account_resolver(path.name, currency) if account_resolver else
@@ -219,6 +228,34 @@ def discover_inputs(inbox):
     return statements, images
 
 
+def fill_suggestions(rows, journal):
+    if not journal.is_file():
+        print(f"Kein lokales Ledger unter {journal}; Gegenkonten bleiben zur Prüfung offen.")
+        return
+    history = bank_suggest.CounterAccounts(journal)
+    ledger = {key: bank_import.ledger_rows(journal, *key)
+              for key in {(row["bank_account"], row["currency"]) for row in rows}}
+    used = {key: set() for key in ledger}
+    for row in rows:
+        key = row["bank_account"], row["currency"]
+        tx = transaction(row)
+        matches = bank_import.candidates(tx, ledger[key], 2)
+        exact = [(index, record) for index, record in matches
+                 if bank_suggest.normalized(record[2]) == bank_suggest.normalized(row["description"])]
+        # If identical bank entries occur more than once, leave any additional
+        # row open rather than quietly discarding a legitimate transaction.
+        if len(matches) == len(exact) == 1 and exact[0][0] not in used[key]:
+            row["action"] = "skip"
+            used[key].add(exact[0][0])
+            continue
+        if matches:
+            continue  # Amount/date collision: needs explicit review.
+        suggested = history.suggest(*key, row["description"], tx[2])
+        if suggested and suggested != row["bank_account"]:
+            row["counter_account"] = suggested
+            row["action"] = "add"
+
+
 def prepare(args):
     if args.draft.exists():
         raise ValueError(f"Entwurf existiert bereits: {args.draft}. Bitte zuerst sichern oder anderen Namen wählen")
@@ -243,6 +280,7 @@ def prepare(args):
         rows.extend(image_rows(image, args.ocr_lang, account_resolver))
     if not rows:
         raise ValueError("Keine Transaktionen erfasst; kein Entwurf erstellt")
+    fill_suggestions(rows, args.ledger)
     # All parsing and OCR finished before the first write.
     args.draft.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     fd = os.open(args.draft, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -250,7 +288,9 @@ def prepare(args):
         writer = csv.DictWriter(handle, fieldnames=FIELDS, delimiter="\t")
         writer.writeheader()
         writer.writerows(rows)
-    print(f"\n{len(rows)} Zeilen in {args.draft}. Mit nvim öffnen und 'action' auf add/skip setzen.")
+    counts = {action: sum(row["action"] == action for row in rows) for action in ("add", "skip", "?")}
+    print(f"\n{len(rows)} Zeilen in {args.draft}: {counts['add']} add, {counts['skip']} skip, "
+          f"{counts['?']} zur Prüfung. Mit nvim kontrollieren und offene '?' auf add/skip setzen.")
     print("Die Beträge sind aus Sicht des Bankkontos: Ausgabe negativ, Eingang positiv.")
     print("Umbuchung: counter_account auf das andere Bankkonto setzen und die zweite CSV-Zeile skippen.")
     print("Währungswechsel: auch counter_amount und counter_currency ausfüllen (z.B. 105.00 und EUR).")
