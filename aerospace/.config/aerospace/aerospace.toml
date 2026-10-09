@@ -240,8 +240,11 @@ if.app-id = 'com.google.Chrome.app.jblcfknbfikdfdjnfkjjlhldpanlcjoh'
 run = 'move-node-to-workspace i'
 
 # Gemini & Claude & ChatGPT
-[[on-window-detected]] 
+[[on-window-detected]]
 if.app-id = 'com.google.Chrome.app.gdfaincndogidkdcdkhapmbffkckdkhn'
+run = 'move-node-to-workspace g'
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser.app.jkkhjddgdchfeocfinamnkpgjgknmafm'
 run = 'move-node-to-workspace g'
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome.app.fmpnliohjhemenmnlpbfagaolkdacoja'
@@ -258,4 +261,3 @@ run = ["layout floating"]
 [[on-window-detected]]
 if.app-id = 'org.python.python'
 run = ["layout floating"]
-
