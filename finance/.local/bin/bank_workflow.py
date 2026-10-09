@@ -241,7 +241,8 @@ def fill_suggestions(rows, journal):
         tx = transaction(row)
         matches = bank_import.candidates(tx, ledger[key], 2)
         exact = [(index, record) for index, record in matches
-                 if bank_suggest.normalized(record[2]) == bank_suggest.normalized(row["description"])]
+                 if record[0] == tx[0] and
+                 bank_suggest.normalized(record[2]) == bank_suggest.normalized(row["description"])]
         # If identical bank entries occur more than once, leave any additional
         # row open rather than quietly discarding a legitimate transaction.
         if len(matches) == len(exact) == 1 and exact[0][0] not in used[key]:

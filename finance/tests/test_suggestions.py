@@ -104,6 +104,12 @@ class SuggestionsTest(unittest.TestCase):
                  patch.object(bank_workflow.bank_import, "ledger_rows", return_value=booked[:1]):
                 bank_workflow.fill_suggestions(unique, journal)
             self.assertEqual([row["action"] for row in unique], ["skip", "?"])
+            different_day = [bank_workflow.make_row("2026-10-02", "Already booked", Decimal("-10"),
+                                                    "EUR", "assets:bank:wise", "wise.csv")]
+            with patch.object(bank_workflow.bank_suggest, "CounterAccounts", return_value=model), \
+                 patch.object(bank_workflow.bank_import, "ledger_rows", return_value=booked[:1]):
+                bank_workflow.fill_suggestions(different_day, journal)
+            self.assertEqual(different_day[0]["action"], "?")
 
 
 if __name__ == "__main__":
