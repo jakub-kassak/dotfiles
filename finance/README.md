@@ -7,17 +7,19 @@ in dieses öffentliche Git-Repository.
 Benötigt werden Python 3 und `pypdf` für die PDFs; für Raiffeisen außerdem
 `pdftotext` (Poppler), für Screenshots `tesseract` und für Prüfung/Übernahme
 `hledger`. Tatra-PDF-Passwörter werden verdeckt im Terminal abgefragt.
+Originalexporte liegen privat unter `~/.local/share/bank-workflow/input`,
+Entwürfe unter `~/.local/share/bank-workflow/drafts` (beide außerhalb von Git).
 
 ```sh
 bank-workflow prepare \
-  --statement /pfad/zum/wise-export.pdf \
+  --statement "$HOME/.local/share/bank-workflow/input/statement-file.zip" \
   --statement /pfad/zum/raiffeisen-auszug.pdf \
   --statement /pfad/zum/tatra-auszug.pdf \
-  --draft "$HOME/Ledger/imports/bank-draft.tsv"
+  --draft "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv"
 
-nvim "$HOME/Ledger/imports/bank-draft.tsv"
-bank-workflow check "$HOME/Ledger/imports/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
-bank-workflow apply "$HOME/Ledger/imports/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
+nvim "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv"
+bank-workflow check "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
+bank-workflow apply "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
 ```
 
 `action` ist `add`, `skip` oder (bei geprüften Duplikatverdachtsfällen) `add!`.
