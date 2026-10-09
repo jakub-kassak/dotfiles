@@ -28,9 +28,14 @@ bank-workflow cleanup "$WORKFLOW/drafts/bank-draft.tsv"
 (auch ein falsch benanntes ZIP mit `.pdf`-Endung). Es legt den privaten
 Entwurfsordner bei Bedarf selbst an. Mit wiederholtem `--statement DATEI`
 bzw. `--image DATEI` können stattdessen gezielt einzelne Dateien gewählt
-werden; `--inbox PFAD` ändert den Suchordner. `cleanup`
+werden; `--inbox PFAD` ändert den Suchordner. Bankkonten werden anhand von
+Bank und Währung aus `~/Ledger/main_2025.ledger` vorgeschlagen und bei
+eindeutigem Treffer automatisch eingesetzt. Mehrdeutige Zuordnungen werden
+einmal abgefragt und ausschließlich lokal in `account-map.json` gemerkt.
+Mit `--ledger PFAD` lässt sich dafür ein anderes Journal wählen. `cleanup`
 löscht nur die im erfolgreich übernommenen Entwurf genannten Eingangsdateien,
-den Entwurf und dessen Übernahmevermerk; es fragt vorher nochmals nach.
+den Entwurf und dessen Übernahmevermerk; die lokale Kontozuordnung bleibt für
+spätere Importe erhalten. Vorher fragt es nochmals nach.
 
 `action` ist `add`, `skip` oder (bei geprüften Duplikatverdachtsfällen) `add!`.
 `amount` ist die Bewegung auf `bank_account`; `counter_account` ist die zweite

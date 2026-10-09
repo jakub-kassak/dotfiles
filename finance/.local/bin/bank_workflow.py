@@ -58,15 +58,15 @@ def text_line(lines, label, default=""):
         print("Bitte eine Zeile oder Text eingeben.")
 
 
-def image_rows(image, language):
+def image_rows(image, language, account_resolver=None):
     result = subprocess.run(["tesseract", str(image), "stdout", "-l", language],
                             text=True, capture_output=True, check=False)
     if result.returncode:
         raise ValueError(f"OCR fehlgeschlagen: {result.stderr.strip()}")
-    return interactive_text_rows(result.stdout, image.name, "OCR")
+    return interactive_text_rows(result.stdout, image.name, "OCR", account_resolver)
 
 
-def interactive_text_rows(text, source, kind):
+def interactive_text_rows(text, source, kind, account_resolver=None):
     lines = [" ".join(line.split()) for line in text.splitlines() if line.strip()]
     print(f"\n{kind} aus {source} (lokal auf deinem Rechner):")
     for index, line in enumerate(lines, 1):
@@ -83,10 +83,11 @@ def interactive_text_rows(text, source, kind):
         print(f"  {index}: {value}")
     if not amounts:
         print("  keine")
-    bank = bank_import.account("hledger-Bankkonto für diesen Screenshot")
     currency = bank_import.prompt("Währung (z.B. EUR/CHF)").upper()
     if not re.fullmatch(r"[A-Z]{3}", currency):
         raise ValueError("Währung muss aus drei Buchstaben bestehen")
+    bank = (account_resolver(source, currency) if account_resolver else
+            bank_import.account("hledger-Bankkonto für diesen Screenshot"))
     result_rows = []
     while True:
         print("\nTransaktion aus diesem Screenshot erfassen (q zum Überspringen/Beenden).")
@@ -118,7 +119,7 @@ def interactive_text_rows(text, source, kind):
     return result_rows
 
 
-def pdf_rows(path, password):
+def pdf_rows(path, password, account_resolver=None):
     try:
         from pypdf import PdfReader
     except ImportError as exc:
@@ -126,7 +127,7 @@ def pdf_rows(path, password):
     with path.open("rb") as handle:
         reader = PdfReader(handle)
         if not reader.is_encrypted:
-            return raiffeisen_pdf_rows(path), password
+            return raiffeisen_pdf_rows(path, account_resolver), password
         if password is None:
             password = getpass.getpass("Passwort für verschlüsselte Bank-PDFs: ")
         if not reader.decrypt(password):
@@ -138,7 +139,7 @@ def pdf_rows(path, password):
     text = "\n".join(page or "" for page in pages)
     if not text.strip():
         raise ValueError("Verschlüsseltes PDF enthält keinen extrahierbaren Text; bitte Screenshot verwenden")
-    return interactive_text_rows(text, path.name, "Entschlüsselter PDF-Text"), password
+    return interactive_text_rows(text, path.name, "Entschlüsselter PDF-Text", account_resolver), password
 
 
 def make_row(date_value, description, amount, currency, bank, source):
@@ -148,7 +149,7 @@ def make_row(date_value, description, amount, currency, bank, source):
             "source": source, "counter_amount": "", "counter_currency": ""}
 
 
-def raiffeisen_pdf_rows(path):
+def raiffeisen_pdf_rows(path, account_resolver=None):
     result = subprocess.run(["pdftotext", "-layout", str(path), "-"],
                             text=True, capture_output=True, check=False)
     if result.returncode:
@@ -183,10 +184,11 @@ def raiffeisen_pdf_rows(path):
     if not entries:
         raise ValueError("Keine Raiffeisen-Umsätze gefunden; PDF-Layout ist möglicherweise anders")
     print(f"\n{path.name}: {len(entries)} Buchungen anhand Datum/Text/Belastung/Gutschrift extrahiert.")
-    bank = bank_import.account("hledger-Bankkonto für diesen Raiffeisen-Auszug")
     currency = bank_import.prompt("Währung des PDF-Kontos (z.B. CHF)").upper()
     if not re.fullmatch(r"[A-Z]{3}", currency):
         raise ValueError("Währung muss drei Großbuchstaben haben")
+    bank = (account_resolver(path.name, currency) if account_resolver else
+            bank_import.account("hledger-Bankkonto für diesen Raiffeisen-Auszug"))
     return [make_row(day.isoformat(), desc, amount, currency, bank, path.name)
             for day, desc, amount in entries]
 
@@ -221,6 +223,7 @@ def prepare(args):
     if args.draft.exists():
         raise ValueError(f"Entwurf existiert bereits: {args.draft}. Bitte zuerst sichern oder anderen Namen wählen")
     statements, images = (args.statement, args.image) if args.statement or args.image else discover_inputs(args.inbox)
+    account_resolver = bank_import.AccountResolver(args.ledger, args.account_map)
     rows = []
     pdf_password = None  # Reuse during this run only; never persist it.
     for statement in statements:
@@ -229,15 +232,15 @@ def prepare(args):
         with statement.open("rb") as handle:
             is_pdf = handle.read(4) == b"%PDF"
         if is_pdf:
-            pdf_transactions, pdf_password = pdf_rows(statement, pdf_password)
+            pdf_transactions, pdf_password = pdf_rows(statement, pdf_password, account_resolver)
             rows.extend(pdf_transactions)
         else:
-            for day, desc, amount, curr, bank, _ in bank_import.read_bank_rows(statement):
+            for day, desc, amount, curr, bank, _ in bank_import.read_bank_rows(statement, account_resolver):
                 rows.append(make_row(day.isoformat(), desc, amount, curr, bank, statement.name))
     for image in images:
         if not image.is_file():
             raise ValueError(f"Screenshot existiert nicht: {image}")
-        rows.extend(image_rows(image, args.ocr_lang))
+        rows.extend(image_rows(image, args.ocr_lang, account_resolver))
     if not rows:
         raise ValueError("Keine Transaktionen erfasst; kein Entwurf erstellt")
     # All parsing and OCR finished before the first write.
@@ -486,6 +489,8 @@ def main(argv=None):
     prep.add_argument("--image", type=Path, action="append", default=[])
     prep.add_argument("--inbox", type=Path, default=WORK_DIR / "inbox", help="Eingangsordner für automatische Erkennung")
     prep.add_argument("--draft", type=Path, default=WORK_DIR / "drafts/bank-draft.tsv")
+    prep.add_argument("--ledger", type=Path, default=Path.home() / "Ledger/main_2025.ledger", help="Ledger für lokale Bankkonto-Vorschläge")
+    prep.add_argument("--account-map", type=Path, default=WORK_DIR / "account-map.json", help="Private, lokal gemerkte Bankkonto-Zuordnungen")
     prep.add_argument("--ocr-lang", default="eng", help="Installierte Tesseract-Sprachen, z.B. eng+deu+slk")
     for name in ("check", "apply"):
         sub = commands.add_parser(name, help="Entwurf mit hledger abgleichen" if name == "check" else "Geprüften Entwurf übernehmen")

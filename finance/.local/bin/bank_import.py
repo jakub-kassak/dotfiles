@@ -10,10 +10,13 @@ import argparse
 import csv
 import hashlib
 import io
+import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 from collections import defaultdict
 from datetime import datetime
@@ -53,6 +56,102 @@ def account(message):
         if value and not re.search(r"[\n\r;\t]", value) and not value.startswith(" "):
             return value
         print("Ungültiger Kontoname.")
+
+
+class AccountResolver:
+    """Find a bank posting account locally; remember ambiguous choices privately."""
+
+    def __init__(self, journal, mapping_file):
+        self.journal = Path(journal).expanduser()
+        self.mapping_file = Path(mapping_file).expanduser()
+        self.accounts = set()
+        if self.journal.is_file():
+            try:
+                result = subprocess.run([hledger_binary(), "-f", str(self.journal), "accounts"],
+                                        text=True, capture_output=True, check=False)
+                if result.returncode:
+                    raise ValueError(result.stderr.strip())
+                self.accounts = {line.strip() for line in result.stdout.splitlines() if line.strip()}
+            except ValueError as exc:
+                print(f"Automatische Kontosuche nicht verfügbar: {exc}")
+        if self.mapping_file.is_symlink():
+            raise ValueError("Kontozuordnung darf kein Symlink sein")
+        self.mapping = {}
+        self._announced = set()
+        if self.mapping_file.is_file():
+            try:
+                data = json.loads(self.mapping_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                raise ValueError("Lokale Kontozuordnung ist nicht lesbar") from exc
+            if data.get("ledger") == str(self.journal.resolve()) and isinstance(data.get("accounts"), dict):
+                self.mapping = data["accounts"]
+
+    @staticmethod
+    def bank_name(source):
+        source = source.lower()
+        if "tatra" in source:
+            return "tatra"
+        if "raiffeisen" in source:
+            return "raiffeisen"
+        if "wise" in source or source.startswith("statement-file"):
+            return "wise"
+        return source
+
+    def _save(self):
+        self.mapping_file.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        fd, temporary = tempfile.mkstemp(prefix=".account-map-", dir=self.mapping_file.parent)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                json.dump({"ledger": str(self.journal.resolve()), "accounts": self.mapping}, handle, indent=2)
+                handle.write("\n")
+            os.chmod(temporary, 0o600)
+            os.replace(temporary, self.mapping_file)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+
+    def __call__(self, source, currency):
+        bank = self.bank_name(source)
+        currency = currency.upper()
+        key = f"{bank}|{currency}"
+        saved = self.mapping.get(key)
+        if isinstance(saved, str) and (not self.accounts or saved in self.accounts):
+            if key not in self._announced:
+                print(f"Bankkonto (lokal gemerkt): {saved}")
+                self._announced.add(key)
+            return saved
+
+        candidates = sorted(name for name in self.accounts
+                            if bank.casefold() in name.casefold() and
+                            name.split(":", 1)[0].casefold() in ("assets", "liabilities"))
+        # Never pick a CHF-specific account for an EUR statement, or vice versa.
+        known = {"EUR", "CHF", "USD", "GBP", "CZK", "PLN", "HUF", "JPY", "CAD", "AUD", "SEK", "NOK", "DKK"}
+        def currency_tokens(name):
+            return set(re.findall(r"(?<![A-Z])[A-Z]{3}(?![A-Z])", name.upper())) & known
+        candidates = [name for name in candidates if not currency_tokens(name) or currency in currency_tokens(name)]
+        exact_currency = [name for name in candidates if currency in currency_tokens(name)]
+        options = exact_currency if exact_currency else candidates
+        if len(options) == 1:
+            selected = options[0]
+            print(f"Bankkonto eindeutig zugeordnet: {selected}")
+        else:
+            if options:
+                print(f"Mögliche hledger-Konten für {bank} ({currency}):")
+                for index, name in enumerate(options, 1):
+                    print(f"  {index}: {name}")
+            while True:
+                answer = prompt(f"Bankkonto für {bank} ({currency}): Nummer oder exakter Name")
+                if answer.isdigit() and 1 <= int(answer) <= len(options):
+                    selected = options[int(answer) - 1]
+                    break
+                if answer and not re.search(r"[\n\r;\t]", answer) and (not self.accounts or answer in self.accounts):
+                    selected = answer
+                    break
+                print("Bitte ein vorhandenes hledger-Konto eingeben.")
+        self.mapping[key] = selected
+        self._save()
+        self._announced.add(key)
+        return selected
 
 
 def parse_number(value):
@@ -106,7 +205,7 @@ def input_csvs(path):
         raise ValueError("Nur CSV oder ZIP mit CSV-Dateien unterstützt (auch fehlbenanntes .pdf-ZIP)")
 
 
-def read_bank_rows(path):
+def read_bank_rows(path, account_resolver=None):
     transactions = []
     for name, data in input_csvs(path):
         text = decode_csv(data)
@@ -129,7 +228,7 @@ def read_bank_rows(path):
             credit_col = column(headers, "Eingang/Gutschrift")
         currency_col = column(headers, "Währung", optional=True)
         id_col = column(headers, "eindeutige Transaktions-ID", optional=True)
-        bank = account("hledger-Bankkonto (exakter Name im Ledger)")
+        bank = account("hledger-Bankkonto (exakter Name im Ledger)") if account_resolver is None else None
         currency = prompt("Währung, falls CSV-Feld leer/fehlt (z.B. CHF)", "CHF").upper()
         date_format = prompt("Datumsformat (Python strptime)", "%Y-%m-%d")
         if not re.fullmatch(r"[A-Z]{3}", currency):
@@ -157,10 +256,11 @@ def read_bank_rows(path):
                 curr = curr.upper()
                 if not re.fullmatch(r"[A-Z]{3}", curr):
                     raise ValueError(f"Unbekannte Währung: {curr!r}")
+                row_bank = account_resolver(path.name, curr) if account_resolver else bank
                 identifier = row[id_col].strip() if id_col is not None else ""
             except (IndexError, ValueError) as exc:
                 raise ValueError(f"{name}, CSV-Zeile {line}: {exc}") from exc
-            transactions.append((date, description, amount, curr, bank, identifier))
+            transactions.append((date, description, amount, curr, row_bank, identifier))
     return transactions
 
 
