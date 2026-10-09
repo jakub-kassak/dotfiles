@@ -11,6 +11,7 @@ import csv
 import getpass
 import hashlib
 import io
+import os
 import re
 import subprocess
 import sys
@@ -21,6 +22,7 @@ from pathlib import Path
 import bank_import
 
 
+WORK_DIR = Path.home() / "Library/Application Support/BankWorkflow"
 FIELDS = ("action", "date", "description", "amount", "currency",
           "bank_account", "counter_account", "source", "counter_amount", "counter_currency")
 OLD_FIELDS = FIELDS[:-2]
@@ -212,7 +214,9 @@ def prepare(args):
     if not rows:
         raise ValueError("Keine Transaktionen erfasst; kein Entwurf erstellt")
     # All parsing and OCR finished before the first write.
-    with args.draft.open("x", encoding="utf-8", newline="") as handle:
+    args.draft.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    fd = os.open(args.draft, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=FIELDS, delimiter="\t")
         writer.writeheader()
         writer.writerows(rows)
@@ -344,6 +348,10 @@ def checked_path(draft):
     return draft.with_name(draft.name + ".checked.sha256")
 
 
+def applied_path(draft):
+    return draft.with_name(draft.name + ".applied.sha256")
+
+
 def check_ledger(journal):
     result = subprocess.run([bank_import.hledger_binary(), "-f", str(journal), "check"],
                             text=True, capture_output=True, check=False)
@@ -381,7 +389,9 @@ def verify(args, apply=False):
     if not checked_path(args.draft).exists() or checked_path(args.draft).read_text(encoding="ascii").strip() != digest:
         raise ValueError("Entwurf seit der letzten Prüfung geändert oder nicht geprüft; zuerst 'check' ausführen")
     if not active:
-        print("Nichts hinzuzufügen.")
+        applied_path(args.draft).write_text(digest + "\n", encoding="ascii")
+        checked_path(args.draft).unlink()
+        print("Nichts hinzuzufügen. Der Entwurf kann nun mit 'cleanup' aufgeräumt werden.")
         return
     print("\nVorschau der endgültigen hledger-Buchungen:")
     for row in active:
@@ -396,12 +406,49 @@ def verify(args, apply=False):
         with args.ledger.open("a", encoding="utf-8") as handle:
             handle.write("\n" + "".join(render(row) for row in active))
         check_ledger(args.ledger)
+        applied_path(args.draft).write_text(digest + "\n", encoding="ascii")
     except (OSError, ValueError):
         with args.ledger.open("rb+") as handle:
             handle.truncate(original_size)
+        applied_path(args.draft).unlink(missing_ok=True)
         raise
     checked_path(args.draft).unlink()
-    print(f"{len(active)} Buchungen übernommen und mit hledger check geprüft. Ledger nun synchronisieren.")
+    print(f"{len(active)} Buchungen übernommen und mit hledger check geprüft."
+          " Nach Ledger-Abgleich mit 'cleanup' temporäre Quellen entfernen.")
+
+
+def cleanup(args):
+    if args.draft.is_symlink():
+        raise ValueError("Der Entwurf darf für cleanup kein Symlink sein")
+    rows = load_draft(args.draft)
+    marker = applied_path(args.draft)
+    digest = hashlib.sha256(args.draft.read_bytes()).hexdigest()
+    if not marker.is_file() or marker.read_text(encoding="ascii").strip() != digest:
+        raise ValueError("Kein passender Übernahmevermerk. Zuerst 'check' und 'apply' ausführen")
+    inbox = args.inbox.resolve()
+    if not inbox.is_dir():
+        raise ValueError(f"Temporärer Eingangsordner fehlt: {inbox}")
+    sources = []
+    for source in sorted({row["source"] for row in rows}):
+        if not source or Path(source).name != source:
+            raise ValueError(f"Ungültiger Quelldateiname im Entwurf: {source!r}")
+        file = inbox / source
+        if file.is_symlink() or file.resolve().parent != inbox:
+            raise ValueError(f"Quelle außerhalb des Eingangsordners: {source}")
+        if file.is_file():
+            sources.append(file)
+    print("Temporäre Dateien zum Entfernen:")
+    for file in sources:
+        print("  ", file)
+    print("  ", args.draft)
+    if bank_import.prompt("Nach Kontrolle des Ledgers wirklich löschen? Tippe LÖSCHEN") != "LÖSCHEN":
+        print("Abgebrochen; nichts gelöscht.")
+        return
+    for file in sources:
+        file.unlink()
+    args.draft.unlink()
+    marker.unlink()
+    print(f"{len(sources)} Quellen und Entwurf entfernt; das Ledger bleibt unverändert.")
 
 
 def main(argv=None):
@@ -410,17 +457,22 @@ def main(argv=None):
     prep = commands.add_parser("prepare", help="CSV/ZIP, Bank-PDFs und Bilder lokal in editierbare TSV-Datei umwandeln")
     prep.add_argument("--statement", type=Path, action="append", default=[], help="CSV/ZIP oder Bank-PDF, mehrfach angebbar")
     prep.add_argument("--image", type=Path, action="append", default=[])
-    prep.add_argument("--draft", type=Path, default=Path("bank-draft.tsv"))
+    prep.add_argument("--draft", type=Path, default=WORK_DIR / "drafts/bank-draft.tsv")
     prep.add_argument("--ocr-lang", default="eng", help="Installierte Tesseract-Sprachen, z.B. eng+deu+slk")
     for name in ("check", "apply"):
         sub = commands.add_parser(name, help="Entwurf mit hledger abgleichen" if name == "check" else "Geprüften Entwurf übernehmen")
         sub.add_argument("draft", type=Path)
         sub.add_argument("ledger", type=Path)
         sub.add_argument("--days", type=int, default=2)
+    clean = commands.add_parser("cleanup", help="Nach geprüfter Übernahme temporäre Quellen und Entwurf löschen")
+    clean.add_argument("draft", type=Path)
+    clean.add_argument("--inbox", type=Path, default=WORK_DIR / "inbox")
     args = parser.parse_args(argv)
     try:
         if args.command == "prepare":
             prepare(args)
+        elif args.command == "cleanup":
+            cleanup(args)
         else:
             verify(args, apply=args.command == "apply")
         return 0

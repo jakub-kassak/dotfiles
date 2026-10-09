@@ -7,20 +7,30 @@ in dieses öffentliche Git-Repository.
 Benötigt werden Python 3 und `pypdf` für die PDFs; für Raiffeisen außerdem
 `pdftotext` (Poppler), für Screenshots `tesseract` und für Prüfung/Übernahme
 `hledger`. Tatra-PDF-Passwörter werden verdeckt im Terminal abgefragt.
-Originalexporte liegen privat unter `~/.local/share/bank-workflow/input`,
-Entwürfe unter `~/.local/share/bank-workflow/drafts` (beide außerhalb von Git).
+Originalexporte liegen bis zur Übernahme privat unter
+`~/Library/Application Support/BankWorkflow/inbox`, Entwürfe unter
+`~/Library/Application Support/BankWorkflow/drafts`. Beide Ordner liegen nur
+auf diesem Mac, außerhalb von Git und des mit Syncthing verbundenen Ledgers.
+Das Ledger selbst bleibt unter `~/Ledger`.
 
 ```sh
+WORKFLOW="$HOME/Library/Application Support/BankWorkflow"
 bank-workflow prepare \
-  --statement "$HOME/.local/share/bank-workflow/input/statement-file.zip" \
+  --statement "$WORKFLOW/inbox/statement-file.zip" \
   --statement /pfad/zum/raiffeisen-auszug.pdf \
   --statement /pfad/zum/tatra-auszug.pdf \
-  --draft "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv"
+  --draft "$WORKFLOW/drafts/bank-draft.tsv"
 
-nvim "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv"
-bank-workflow check "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
-bank-workflow apply "$HOME/.local/share/bank-workflow/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
+nvim "$WORKFLOW/drafts/bank-draft.tsv"
+bank-workflow check "$WORKFLOW/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
+bank-workflow apply "$WORKFLOW/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
+# Nach eigener Kontrolle des Ledgers und seiner Synchronisierung:
+bank-workflow cleanup "$WORKFLOW/drafts/bank-draft.tsv"
 ```
+
+`prepare` legt den privaten Entwurfsordner bei Bedarf selbst an. `cleanup`
+löscht nur die im erfolgreich übernommenen Entwurf genannten Eingangsdateien,
+den Entwurf und dessen Übernahmevermerk; es fragt vorher nochmals nach.
 
 `action` ist `add`, `skip` oder (bei geprüften Duplikatverdachtsfällen) `add!`.
 `amount` ist die Bewegung auf `bank_account`; `counter_account` ist die zweite
