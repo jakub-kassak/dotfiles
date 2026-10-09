@@ -15,11 +15,7 @@ Das Ledger selbst bleibt unter `~/Ledger`.
 
 ```sh
 WORKFLOW="$HOME/Library/Application Support/BankWorkflow"
-bank-workflow prepare \
-  --statement "$WORKFLOW/inbox/statement-file.zip" \
-  --statement /pfad/zum/raiffeisen-auszug.pdf \
-  --statement /pfad/zum/tatra-auszug.pdf \
-  --draft "$WORKFLOW/drafts/bank-draft.tsv"
+bank-workflow prepare
 
 nvim "$WORKFLOW/drafts/bank-draft.tsv"
 bank-workflow check "$WORKFLOW/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.ledger"
@@ -28,7 +24,11 @@ bank-workflow apply "$WORKFLOW/drafts/bank-draft.tsv" "$HOME/Ledger/main_2025.le
 bank-workflow cleanup "$WORKFLOW/drafts/bank-draft.tsv"
 ```
 
-`prepare` legt den privaten Entwurfsordner bei Bedarf selbst an. `cleanup`
+`prepare` findet CSV-, ZIP- und PDF-Auszüge sowie Screenshots direkt in `inbox`
+(auch ein falsch benanntes ZIP mit `.pdf`-Endung). Es legt den privaten
+Entwurfsordner bei Bedarf selbst an. Mit wiederholtem `--statement DATEI`
+bzw. `--image DATEI` können stattdessen gezielt einzelne Dateien gewählt
+werden; `--inbox PFAD` ändert den Suchordner. `cleanup`
 löscht nur die im erfolgreich übernommenen Entwurf genannten Eingangsdateien,
 den Entwurf und dessen Übernahmevermerk; es fragt vorher nochmals nach.
 

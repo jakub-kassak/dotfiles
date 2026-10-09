@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 import sys
+import zipfile
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -30,6 +31,7 @@ DATE_PATTERN = re.compile(r"\b(?:\d{4}[-./]\d{1,2}[-./]\d{1,2}|\d{1,2}[-./]\d{1,
 AMOUNT_PATTERN = re.compile(r"(?<!\w)[+-]?(?:\d{1,3}(?:[ '\u00a0.,]\d{3})+|\d+)(?:[.,]\d{2})(?!\w)")
 PDF_ROW = re.compile(r"^(\d{2}\.\d{2}\.\d{4})\s")
 PDF_VALUE_DATE = re.compile(r"\s+\d{2}\.\d{2}\.\d{4}\s*$")
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
 
 
 def date_guess(text):
@@ -189,14 +191,39 @@ def raiffeisen_pdf_rows(path):
             for day, desc, amount in entries]
 
 
+def discover_inputs(inbox):
+    if not inbox.is_dir():
+        raise ValueError(f"Eingangsordner fehlt: {inbox}")
+    statements, images = [], []
+    for path in sorted(inbox.iterdir()):
+        if path.is_symlink() or not path.is_file():
+            continue
+        if path.suffix.lower() in IMAGE_SUFFIXES:
+            images.append(path)
+        elif path.suffix.lower() == ".csv":
+            statements.append(path)
+        else:
+            with path.open("rb") as handle:
+                is_pdf = handle.read(4) == b"%PDF"
+            if is_pdf or zipfile.is_zipfile(path):
+                statements.append(path)
+            else:
+                print(f"Übersprungen (unbekanntes Format): {path.name}")
+    if not statements and not images:
+        raise ValueError(f"Keine CSV-, ZIP-, PDF- oder Bilddateien in {inbox} gefunden")
+    print(f"Gefunden: {len(statements)} Auszüge, {len(images)} Bilder in {inbox}")
+    for path in statements + images:
+        print("  ", path.name)
+    return statements, images
+
+
 def prepare(args):
     if args.draft.exists():
         raise ValueError(f"Entwurf existiert bereits: {args.draft}. Bitte zuerst sichern oder anderen Namen wählen")
-    if not args.statement and not args.image:
-        raise ValueError("Mindestens --statement oder --image ist nötig")
+    statements, images = (args.statement, args.image) if args.statement or args.image else discover_inputs(args.inbox)
     rows = []
     pdf_password = None  # Reuse during this run only; never persist it.
-    for statement in args.statement:
+    for statement in statements:
         if not statement.is_file():
             raise ValueError(f"Auszug existiert nicht: {statement}")
         with statement.open("rb") as handle:
@@ -207,7 +234,7 @@ def prepare(args):
         else:
             for day, desc, amount, curr, bank, _ in bank_import.read_bank_rows(statement):
                 rows.append(make_row(day.isoformat(), desc, amount, curr, bank, statement.name))
-    for image in args.image:
+    for image in images:
         if not image.is_file():
             raise ValueError(f"Screenshot existiert nicht: {image}")
         rows.extend(image_rows(image, args.ocr_lang))
@@ -454,9 +481,10 @@ def cleanup(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    prep = commands.add_parser("prepare", help="CSV/ZIP, Bank-PDFs und Bilder lokal in editierbare TSV-Datei umwandeln")
+    prep = commands.add_parser("prepare", help="CSV/ZIP, Bank-PDFs und Bilder im Eingangsordner automatisch erkennen")
     prep.add_argument("--statement", type=Path, action="append", default=[], help="CSV/ZIP oder Bank-PDF, mehrfach angebbar")
     prep.add_argument("--image", type=Path, action="append", default=[])
+    prep.add_argument("--inbox", type=Path, default=WORK_DIR / "inbox", help="Eingangsordner für automatische Erkennung")
     prep.add_argument("--draft", type=Path, default=WORK_DIR / "drafts/bank-draft.tsv")
     prep.add_argument("--ocr-lang", default="eng", help="Installierte Tesseract-Sprachen, z.B. eng+deu+slk")
     for name in ("check", "apply"):
