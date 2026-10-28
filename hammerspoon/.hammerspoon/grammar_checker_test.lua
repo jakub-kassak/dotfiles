@@ -112,6 +112,7 @@ check(policy("navigationAction", popup, { request = { URL = { url = "about:blank
 check(not policy("navigationAction", popup, { request = { URL = "https://example.org" } }), "block external navigation")
 check(not policy("newWindow", popup, {}), "block new windows")
 check(requests[1].headers["x-goog-api-key"] == "test-google" and not requests[1].url:find("key="), "key in header, not URL")
+check(requests[1].payload.systemInstruction.parts[1].text:find("der, die, or das", 1, true) ~= nil, "instructions require German articles across languages")
 check(requests[1].payload.generationConfig.responseMimeType == "application/json", "structured Gemini output")
 complete(1, result("This is a longer test."))
 check(pb == "This is a longer test.", "copy corrected text only")

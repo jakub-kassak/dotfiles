@@ -359,6 +359,7 @@ Modes: grammar = fix grammar, spelling and punctuation ONLY; polish = improve na
 concise = tighten wording without losing information; formal = professional/formal tone.
 Operation lexicon: define the supplied word/phrase in its language, give grammar/gender/declension
 notes, synonyms, and translations into en/de/sk. Keep corrected_text identical to input in lexicon mode.
+In lexicon mode, EVERY German noun in dictionary.translations.de (even when the input word is in English, Slovak, or another language) MUST include its definite article (der, die, or das) and plural form when applicable (e.g., "der Tisch (Pl. die Tische)", "das Haus (Pl. die Häuser)"). In dictionary.grammar, also explicitly state the German article/gender for the German noun equivalent(s) regardless of the input language.
 For other operations, dictionary fields must be empty strings and synonyms an empty array.
 For translate, corrected_text is the full translation into target language.
 For unchanged text return the EXACT original in corrected_text and changed=false, not a status message.
