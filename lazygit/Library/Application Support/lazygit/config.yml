@@ -1,0 +1,8 @@
+git:
+  diffRenderers:
+    - name: delta
+      type: stdinFilter
+      command: delta --{{colorScheme}} --paging=never --side-by-side
+    - name: difft
+      type: extDiff
+      command: difft --color=always --background={{colorScheme}} --context={{diffContext}} --display=side-by-side-show-both

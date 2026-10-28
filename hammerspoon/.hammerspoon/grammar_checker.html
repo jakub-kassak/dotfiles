@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+<style>
+:root{color-scheme:dark;--muted:#949aab;--accent:#b9aeff;--line:#ffffff12}
+*{box-sizing:border-box}html,body{margin:0;background:#17191f;color:#eef0f6;font:14px/1.6 -apple-system,BlinkMacSystemFont,sans-serif}
+body{padding:0}.card{overflow:hidden;background:linear-gradient(145deg,#292a35,#17191f 65%)}
+header{display:flex;align-items:center;gap:9px;padding:14px 18px 8px}.spark{font-size:21px;color:var(--accent)}h1{font-size:14px;letter-spacing:.1px;margin:0;font-weight:650}.spacer{flex:1}.badge{background:#ffffff0b;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:10px;color:#c1c4d1;text-transform:uppercase;letter-spacing:.7px}
+button{font:inherit;color:inherit;border:1px solid transparent;background:transparent;border-radius:8px;padding:5px 9px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}button:hover:not(:disabled){background:#ffffff10}button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.35;cursor:default}.close{font-size:18px;color:var(--muted);padding:0 7px}
+.toolbar{padding:12px 17px 6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}.toolbar+.toolbar{padding-top:4px;padding-bottom:10px}.segments{display:flex;border:1px solid var(--line);border-radius:9px;padding:2px;background:#0002}.segments button{font-size:11px;padding:3px 8px}.segments button.active{background:#ffffff13;color:#eee9ff;box-shadow:0 1px 3px #0003}.tiny{font-size:11px;color:var(--muted)}.tool.active{color:var(--accent);background:#b9aeff14}.translations{display:flex;align-items:center;gap:1px}.translations button{font-size:10px;padding:2px 6px;color:#aeb4c4}.translations button.active{color:#d1c9ff;background:#b9aeff18}
+main{padding:4px 20px 14px;overflow:auto;max-height:460px}.meta{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--muted);font-size:11px}.result{font-size:16px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text;padding:2px 0 9px}del{color:#ffa9ad;background:#ff67751b;text-decoration-color:#ff8791;border-radius:5px;padding:1px 2px}ins{color:#abefc3;background:#5ddc8e20;text-decoration:none;border-radius:5px;padding:1px 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+details{border-top:1px solid var(--line);padding-top:10px;font-size:12px;color:#b6bdcb}summary{cursor:pointer;color:var(--muted)}ul{padding-left:18px;margin:8px 0}li{margin:7px 0}.dictTitle{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin:14px 0 4px}.dictionary p{margin:0 0 8px;color:#ced2df;white-space:pre-wrap}.translationRow{display:flex;gap:10px;margin:5px 0}.translationRow .badge{align-self:start;min-width:32px}.notice{font-size:11px;color:#989faf;padding:8px 20px 0;overflow-wrap:anywhere}.error{background:#ff7a8210;border:1px solid #ff7a8227;border-radius:10px;padding:12px;color:#ffc0c4;font-size:13px}
+footer{display:flex;align-items:center;gap:5px;padding:12px 15px;border-top:1px solid var(--line);margin-top:10px;background:#00000015}footer button{font-size:12px}.primary{background:#b7aaff;color:#201b34;font-weight:600;padding:7px 11px}.primary:hover:not(:disabled){background:#c7bdff}kbd{display:inline-block;margin-left:5px;padding:0 4px;border:1px solid #ffffff15;border-radius:4px;font:10px/1.6 -apple-system,sans-serif;color:#9097a8}.primary kbd{color:#49405e;border-color:#201b3425}.history{font-size:10px;color:var(--muted);white-space:nowrap}.history button{padding:1px 4px;font-size:14px}.bottom{display:flex;gap:7px;align-items:center;padding:0 19px 12px;color:#757e91;font-size:10px}select{font:inherit;color:#abb0c0;background:#ffffff08;border:1px solid var(--line);border-radius:5px;padding:2px 4px;max-width:140px}
+.loading{padding:13px 0 22px}.loadLabel{display:flex;align-items:center;gap:9px;color:#c7c1e1;font-size:12px;margin-bottom:17px}.spinner{width:13px;height:13px;border:2px solid #b9aeff25;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}.skeleton{height:12px;margin:13px 0;border-radius:5px;background:linear-gradient(100deg,#ffffff06 20%,#ffffff14 45%,#ffffff06 70%);background-size:250% 100%;animation:shimmer 1.7s ease-in-out infinite}.skeleton:nth-last-child(1){width:57%}.skeleton:nth-last-child(2){width:83%}@keyframes shimmer{to{background-position:-250% 0}}@keyframes spin{to{transform:rotate(360deg)}}[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body><section class="card" id="card" aria-label="Writing assistant">
+<div class="toolbar"><div class="segments" id="modes"><button data-action="mode" data-value="grammar" title="Grammar only · 1">Correct</button><button data-action="mode" data-value="polish" title="Natural phrasing · 2">Polish</button><button data-action="mode" data-value="concise" title="More concise · 3">Concise</button><button data-action="mode" data-value="formal" title="Professional tone · 4">Formal</button></div><span class="spacer"></span><button class="tiny tool" id="lexicon" data-action="lexicon" title="Dictionary · L">Lexicon</button><span class="badge" id="language">AUTO</span></div>
+<div class="toolbar"><span class="tiny">Translate</span><div class="translations" id="translations"><button data-action="translate" data-value="en" title="Translate to English · ⌥E">EN</button><button data-action="translate" data-value="de" title="Translate to German · ⌥D">DE</button><button data-action="translate" data-value="sk" title="Translate to Slovak · ⌥S">SK</button></div><span class="spacer"></span><button class="tiny" id="view" data-action="diff">Diff <kbd>D</kbd></button></div>
+<main id="main"><div class="loading" id="loading" role="status"><div class="loadLabel"><span class="spinner"></span><span id="loadingLabel">Checking your writing…</span></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div><div id="error" class="error" role="alert" hidden></div><div id="content" hidden><div class="meta"><span id="summary"></span><span class="spacer"></span><span id="source"></span></div><div id="result" class="result"></div><div id="dictionary" class="dictionary" hidden></div><details id="explanations"><summary id="correctionCount"></summary><ul id="corrections"></ul></details></div></main>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+<footer><span class="history"><button data-action="previous" id="previous" aria-label="Previous result">‹</button><span id="history">0 / 0</span><button data-action="next" id="next" aria-label="Next result">›</button></span><button data-action="restore" id="restore" title="Restore original to clipboard · U">Restore <kbd>U</kbd></button><span class="spacer"></span><button data-action="copy" id="copy">Copy <kbd>C</kbd></button><button class="primary" data-action="replace" id="replace" title="Replace the original selection">Replace <kbd>↵</kbd></button></footer>
+<div class="bottom"><select id="provider" aria-label="AI provider"><option value="gemini">Gemini</option><option value="openai">OpenAI</option></select><span id="model"></span><span class="spacer"></span><button class="tiny" data-action="retry" title="Retry current action">Retry</button><span>Esc to close</span></div>
+</section>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+function send(action,value){window.webkit.messageHandlers.grammarHUD.postMessage({action,value:value??''});}
+document.addEventListener('click',event=>{const button=event.target.closest('button[data-action]');if(button&&!button.disabled)send(button.dataset.action,button.dataset.value);});
+$('provider').addEventListener('change',event=>send('provider',event.target.value));
+// All provider/user strings enter the DOM via textContent or text nodes, never HTML.
+function tokens(text){return text.match(/\s+|[\p{L}\p{N}\p{M}_]+|[^\s]/gu)||[];}
+function diff(a,b){
+ const x=tokens(a),y=tokens(b),out=[];
+ const add=(kind,text)=>{if(!text)return;const last=out[out.length-1];if(last&&last[0]===kind)last[1]+=text;else out.push([kind,text]);};
+ if((x.length+1)*(y.length+1)>450000){
+  let head=0,tail=0;while(head<x.length&&head<y.length&&x[head]===y[head])head++;
+  while(tail<x.length-head&&tail<y.length-head&&x[x.length-tail-1]===y[y.length-tail-1])tail++;
+  add('span',x.slice(0,head).join(''));add('del',x.slice(head,x.length-tail).join(''));add('ins',y.slice(head,y.length-tail).join(''));add('span',x.slice(x.length-tail).join(''));return out;
+ }
+ const matrix=Array.from({length:x.length+1},()=>new Uint32Array(y.length+1));
+ for(let i=x.length-1;i>=0;i--)for(let j=y.length-1;j>=0;j--)matrix[i][j]=x[i]===y[j]?1+matrix[i+1][j+1]:Math.max(matrix[i+1][j],matrix[i][j+1]);
+ let i=0,j=0;while(i<x.length||j<y.length){if(i<x.length&&j<y.length&&x[i]===y[j]){add('span',x[i++]);j++;}else if(i<x.length&&(j===y.length||matrix[i+1][j]>=matrix[i][j+1]))add('del',x[i++]);else add('ins',y[j++]);}return out;
+}
+function textElement(tag,text,className){const node=document.createElement(tag);node.textContent=text;if(className)node.className=className;return node;}
+function dictionary(data){const parent=$('dictionary');parent.replaceChildren();for(const [title,value] of [['Definition',data.definition],['Grammar & usage',data.grammar],['Synonyms',data.synonyms.join(' · ')]]){if(value){parent.append(textElement('div',title,'dictTitle'),textElement('p',value));}}parent.append(textElement('div','Translations','dictTitle'));for(const lang of ['en','de','sk']){const row=textElement('div','','translationRow');row.append(textElement('span',lang.toUpperCase(),'badge'),textElement('span',data.translations[lang]));parent.append(row);}}
+let lastHeight=0,maxHeight=700;
+function resize(){requestAnimationFrame(()=>{const chrome=$('card').getBoundingClientRect().height-$('main').getBoundingClientRect().height+28;$('main').style.maxHeight=Math.max(70,Math.min(460,maxHeight-chrome))+'px';const height=Math.ceil($('card').getBoundingClientRect().height+28);if(Math.abs(height-lastHeight)>2){lastHeight=height;send('resize',height);}});}
+window.render=function(s){
+ maxHeight=s.maxHeight||700;
+ $('loading').hidden=!s.busy;$('error').hidden=!s.error;$('error').textContent=s.error;
+ $('content').hidden=s.busy||!!s.error||!s.result;
+ $('loadingLabel').textContent=s.status==='Retrying…'?'Reconnecting to provider…':s.operation==='lexicon'?'Looking up meaning & usage…':s.operation==='translate'?'Translating to '+s.target.toUpperCase()+'…':'Refining your writing…';
+ $('language').textContent=s.result?s.result.language:'AUTO';$('model').textContent=s.model;$('notice').textContent=s.notice;
+ $('modes').querySelectorAll('button').forEach(b=>b.classList.toggle('active',s.operation==='write'&&b.dataset.value===s.mode));
+ $('translations').querySelectorAll('button').forEach(b=>b.classList.toggle('active',s.operation==='translate'&&b.dataset.value===s.target));
+ $('lexicon').classList.toggle('active',s.operation==='lexicon');$('view').firstChild.textContent=s.view==='diff'?'Diff ':'Clean ';
+ $('provider').value=s.provider;$('provider').options[0].disabled=!s.hasGemini;$('provider').options[1].disabled=!s.hasOpenAI;
+ $('history').textContent=s.index+' / '+s.total;$('previous').disabled=s.index<=1;$('next').disabled=s.index>=s.total;
+ $('copy').disabled=s.busy||!s.result;$('replace').disabled=!s.canReplace;$('restore').disabled=!s.original;
+ $('replace').title=s.canReplace?'Replace original selection · Return':'Available only for the current, unchanged original selection';
+ if(s.result){const r=s.result;$('summary').textContent=s.operation==='lexicon'?'Word & phrase lookup':s.operation==='translate'?'Translation · '+s.target.toUpperCase():r.changed?r.corrections.length+' improvement'+(r.corrections.length===1?'':'s'):'Looks good · no changes needed';$('source').textContent='From '+s.source;
+  $('result').replaceChildren();if(s.view==='diff'&&s.operation!=='lexicon'){for(const [kind,text] of diff(s.original,r.corrected_text))$('result').append(textElement(kind,text));}else $('result').textContent=r.corrected_text;
+  $('dictionary').hidden=s.operation!=='lexicon';if(s.operation==='lexicon')dictionary(r.dictionary);
+  $('explanations').hidden=!r.corrections.length||s.operation==='lexicon';$('correctionCount').textContent=r.corrections.length+' correction'+(r.corrections.length===1?'':'s')+' explained';$('corrections').replaceChildren();for(const c of r.corrections)$('corrections').append(textElement('li',c.explanation));
+ }
+ resize();
+};
+$('explanations').addEventListener('toggle',resize);
+// Modal shortcuts are owned by Lua; native Cmd+C remains available for text selection.
+</script></body></html>

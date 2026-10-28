@@ -259,4 +259,6 @@ config.send_composed_key_when_right_alt_is_pressed = true
 
 -- Selection is automatically copied to the clipboard by WezTerm on macOS.
 
+require('nvim_open').apply(config)
+
 return config

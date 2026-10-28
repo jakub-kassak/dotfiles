@@ -154,6 +154,24 @@ alias lg='DFT_BACKGROUND=light lazygit'
 alias lgd='DFT_BACKGROUND=dark lazygit'
 alias codex='CODEX_HOME="$HOME/.codex-alt" command codex'
 alias codex-tac='CODEX_HOME="$HOME/.codex" command codex'
+
+# Change the shell's working directory to nnn's last directory on exit.
+n() {
+    if [[ "${NNNLVL:-0}" -ne 0 ]]; then
+        print -r -- "nnn is already running"
+        return
+    fi
+
+    local -x NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+    command nnn "$@"
+
+    if [[ -f "$NNN_TMPFILE" ]]; then
+        source "$NNN_TMPFILE"
+        rm -f -- "$NNN_TMPFILE"
+    fi
+}
+alias nnn='n'
+
 function gemini-docker {
     local tty_args=""
     if [ -t 0 ]; then
@@ -285,3 +303,6 @@ else
     export CACERTS_PATH="$CA_BUNDLE_PATH"
 fi
 # ZSCALER CERTIFICATE CONFIGURATION END
+
+# Lean toolchains (elan).
+[ -f "$HOME/.elan/env" ] && . "$HOME/.elan/env"

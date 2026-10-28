@@ -261,3 +261,7 @@ run = ["layout floating"]
 [[on-window-detected]]
 if.app-id = 'org.python.python'
 run = ["layout floating"]
+
+[[on-window-detected]]
+if.app-id = 'org.hammerspoon.Hammerspoon'
+run = ["layout floating"]

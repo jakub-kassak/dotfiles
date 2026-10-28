@@ -13,4 +13,7 @@ finance/**/*.pdf
 finance/**/*.journal
 finance/**/*.ledger
 finance/**/*.tsv
+finance/tests/.codex/
+finance/tests/pretooluse.jsonl
+**/*.before-*
 zellij/config.kdl

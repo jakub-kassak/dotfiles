@@ -1,0 +1,6 @@
+# Lean constructor brackets. The trailing space is part of each trigger.
+matches:
+  - trigger: ";langle "
+    replace: "⟨"
+  - trigger: ";rangle "
+    replace: "⟩"

@@ -1094,7 +1094,11 @@ local servers = {
     -- rust_analyzer = {},
     
     -- HLS is configured below, outside of mason-lspconfig
-    pyright = {},  -- Python Type Checker
+    pyright = {  -- Python Type Checker
+      settings = {
+        pyright = { disableTaggedHints = true },
+      },
+    },
     ruff = {},     -- Python Linter and Formatter
     texlab = {},   -- LaTeX definitions, references, completion and diagnostics
     tinymist = {

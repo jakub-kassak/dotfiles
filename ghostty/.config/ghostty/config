@@ -1,0 +1,126 @@
+# Ported from ~/.config/wezterm/wezterm.lua
+# Ghostty config is declarative (no Lua/scripting), so a few WezTerm features
+# below have no equivalent — see the NOT PORTED section at the bottom.
+
+font-family = JetBrainsMono Nerd Font
+font-size = 13
+
+# Follow macOS light/dark automatically (replaces the CMD+D manual toggle)
+theme = light:iTerm2 Solarized Light,dark:iTerm2 Solarized Dark
+window-theme = auto
+
+# NOT `window-decoration = false` -- on macOS that removes the native window
+# frame entirely, which also kills native tabs. This keeps the frame (and
+# tabs) but hides the titlebar, per Ghostty's own docs.
+macos-titlebar-style = hidden
+cursor-style = block
+shell-integration-features = no-cursor
+copy-on-select = true
+window-padding-x = 0
+window-padding-y = 0
+
+# Keep plain Option producing composed chars (e.g. ä); only CTRL+OPT combos
+# below are remapped to send literal Alt sequences, same as the WezTerm setup.
+macos-option-as-alt = false
+
+window-width = 110
+window-height = 35
+
+focus-follows-mouse = false
+
+# --- Tabs ---
+keybind = cmd+t=new_tab
+keybind = cmd+w=close_surface
+keybind = ctrl+w=close_surface
+keybind = ctrl+[=previous_tab
+keybind = ctrl+]=next_tab
+
+# --- Splits ---
+keybind = ctrl+shift+backslash=new_split:right
+keybind = ctrl+shift+minus=new_split:down
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+j=goto_split:down
+keybind = ctrl+shift+k=goto_split:up
+keybind = ctrl+shift+l=goto_split:right
+
+# --- Scrolling ---
+keybind = page_up=scroll_page_up
+keybind = page_down=scroll_page_down
+
+# --- CTRL+OPT+<key> -> literal Alt sequences (for Zellij, matching the
+#     WezTerm workaround so pure Option still types accented chars) ---
+keybind = ctrl+alt+a=text:\x1ba
+keybind = ctrl+alt+b=text:\x1bb
+keybind = ctrl+alt+c=text:\x1bc
+keybind = ctrl+alt+d=text:\x1bd
+keybind = ctrl+alt+e=text:\x1be
+keybind = ctrl+alt+f=text:\x1bf
+keybind = ctrl+alt+g=text:\x1bg
+keybind = ctrl+alt+h=text:\x1bh
+keybind = ctrl+alt+i=text:\x1bi
+keybind = ctrl+alt+j=text:\x1bj
+keybind = ctrl+alt+k=text:\x1bk
+keybind = ctrl+alt+l=text:\x1bl
+keybind = ctrl+alt+m=text:\x1bm
+keybind = ctrl+alt+n=text:\x1bn
+keybind = ctrl+alt+o=text:\x1bo
+keybind = ctrl+alt+p=text:\x1bp
+keybind = ctrl+alt+q=text:\x1bq
+keybind = ctrl+alt+r=text:\x1br
+keybind = ctrl+alt+s=text:\x1bs
+keybind = ctrl+alt+t=text:\x1bt
+keybind = ctrl+alt+u=text:\x1bu
+keybind = ctrl+alt+v=text:\x1bv
+keybind = ctrl+alt+w=text:\x1bw
+keybind = ctrl+alt+x=text:\x1bx
+keybind = ctrl+alt+y=text:\x1by
+keybind = ctrl+alt+z=text:\x1bz
+keybind = ctrl+alt+0=text:\x1b0
+keybind = ctrl+alt+1=text:\x1b1
+keybind = ctrl+alt+2=text:\x1b2
+keybind = ctrl+alt+3=text:\x1b3
+keybind = ctrl+alt+4=text:\x1b4
+keybind = ctrl+alt+5=text:\x1b5
+keybind = ctrl+alt+6=text:\x1b6
+keybind = ctrl+alt+7=text:\x1b7
+keybind = ctrl+alt+8=text:\x1b8
+keybind = ctrl+alt+9=text:\x1b9
+keybind = ctrl+alt+left_bracket=text:\x1b[
+keybind = ctrl+alt+right_bracket=text:\x1b]
+
+# CTRL+arrows -> Alt+arrows (for Zellij, matching the WezTerm SendKey remap)
+keybind = ctrl+left=text:\x1b[1;3D
+keybind = ctrl+right=text:\x1b[1;3C
+keybind = ctrl+up=text:\x1b[1;3A
+keybind = ctrl+down=text:\x1b[1;3B
+
+# CTRL+1..9 -> Alt+1..9 (for Zellij, matching the WezTerm SendKey remap)
+keybind = ctrl+1=text:\x1b1
+keybind = ctrl+2=text:\x1b2
+keybind = ctrl+3=text:\x1b3
+keybind = ctrl+4=text:\x1b4
+keybind = ctrl+5=text:\x1b5
+keybind = ctrl+6=text:\x1b6
+keybind = ctrl+7=text:\x1b7
+keybind = ctrl+8=text:\x1b8
+keybind = ctrl+9=text:\x1b9
+
+# --- NOT PORTED (no Ghostty equivalent — Ghostty config can't run ---
+# --- callbacks/scripts or show these interactive UI overlays) ---
+#
+# - CMD+D dark/light toggle + ~/.kvim_dark file touch
+#     -> replaced by `window-theme = auto` above; kvim now reads macOS
+#        appearance directly instead of this file (see kvim script update).
+# - CMD+SHIFT+Enter "move pane to new window"
+#     -> no equivalent action in Ghostty.
+# - Smart CTRL+C (copy selection if present, else send ^C)
+#     -> Ghostty has no conditional keybind action; use CMD+C to copy,
+#        CTRL+C to interrupt.
+# - SUPER+P tab navigator / SUPER+SHIFT+P launcher menu
+#     -> Ghostty has no tab-navigator or launcher-menu overlay.
+# - CTRL+SHIFT+M interactive pane-select overlay
+#     -> no equivalent; use the goto_split binds above instead.
+# - CTRL+SHIFT+E rename current tab (prompt input)
+#     -> Ghostty has no prompt-for-input action.
+# - quick_select_patterns (regex-based quick select overlay)
+#     -> Ghostty only does automatic URL detection, no custom regex patterns.
